@@ -129,10 +129,10 @@ $RECYCLE.BIN/
 *.log
 logs/
 
-# Data directories
-data/
-dataset/
-datasets/
+# Data directories (only root level)
+/data/
+/dataset/
+/datasets/
 RSGPT/
 *.json
 *.csv
