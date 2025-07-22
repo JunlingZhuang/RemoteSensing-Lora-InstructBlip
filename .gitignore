@@ -1,0 +1,291 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyTorch
+*.pth
+*.pt
+*.ckpt
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# pdm
+.pdm.toml
+
+# PEP 582
+__pypackages__/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+
+# Data directories
+data/
+dataset/
+datasets/
+RSGPT/
+*.json
+*.csv
+*.tsv
+
+# Model files and checkpoints
+checkpoints/
+models/
+*.bin
+*.safetensors
+model_cache/
+huggingface_cache/
+
+# Training outputs
+runs/
+outputs/
+results/
+wandb/
+tensorboard_logs/
+
+# Images and media
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.tiff
+*.svg
+*.ico
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.flv
+*.webm
+
+# Archives
+*.zip
+*.tar
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.rar
+*.7z
+
+# IDE and editor files
+*.sublime-project
+*.sublime-workspace
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store?
+ehthumbs.db
+Icon?
+Thumbs.db
+
+# Project specific
+test_*.py
+debug_*.py
+temp_*.py
+scratch_*.py
+
+# Evaluation results
+evaluation_results/
+eval_outputs/
+
+# Cache directories
+.cache/
+__pycache__/
+.pytest_cache/
+
+# Documentation build
+docs/_build/
+docs/build/
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Configuration files with sensitive data
+config_local.py
+secrets.py
+.secrets
+
+# Large files that shouldn't be in git
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+
+# Virtual environments
+conda-meta/
+.conda/
+
+# Jupyter
+.jupyter/
+
+# matplotlib
+.matplotlib/
+
+# pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# mypy
+.mypy_cache/
+
+# Profiling
+*.prof
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Node.js (if using any JS tools)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignore specific large model files
+*.model
+*.vocab
+*.tokenizer
+
+# Ignore experiment tracking
+mlruns/
+.mlflow/
+
+# Ignore compiled extensions
+*.so
+*.dylib
+*.dll
+
+# Ignore temporary Python files
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore IDE settings
+.spyderproject
+.spyproject
+.ropeproject
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Custom ignores for this project
+training_curves.png
+training_summary*.json
+checkpoint_*.pth

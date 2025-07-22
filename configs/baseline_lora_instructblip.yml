@@ -1,0 +1,30 @@
+# Baseline Configuration for LoRA InstructBLIP Training
+
+# Configuration Metadata
+name: "baseline_lora_instructblip"
+description: "Stable baseline configuration for LoRA fine-tuning of InstructBLIP on RSICap dataset. Optimized for RTX 3090 24GB memory with proven numerical stability. Achieves ~46% accuracy on RSIEval VQA benchmark."
+
+# Training Parameters
+num_epochs: 6
+batch_size: 10
+learning_rate: 0.0005
+max_samples: 10
+
+# LoRA Parameters
+lora_r: 8
+lora_alpha: 16
+lora_dropout: 0.1
+
+# Optimization Parameters
+warmup_steps: 50
+max_grad_norm: 1.0
+
+# Learning Rate Scheduler (LinearLR only)
+start_factor: 0.1 # Initial LR factor for warmup (LR starts at learning_rate * start_factor)
+
+# Data Parameters
+val_split: 0.2
+random_seed: 42
+
+# Model Parameters
+torch_dtype: "float32"
