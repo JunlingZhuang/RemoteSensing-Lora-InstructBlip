@@ -140,7 +140,7 @@ RSGPT/
 
 # Model files and checkpoints
 checkpoints/
-models/
+/models/
 *.bin
 *.safetensors
 model_cache/
