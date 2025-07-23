@@ -1,0 +1,31 @@
+# Ultra Conservative Configuration for 48GB GPU
+# Emergency fix: Drastically reduced batch size after OOM
+
+# Configuration Metadata
+name: "ultra_conservative_lora_instructblip"
+description: "Ultra conservative configuration after OOM with batch_size=24. Prioritizes stability over speed."
+
+# Training Parameters
+num_epochs: 10              # More epochs to compensate for smaller batch
+batch_size: 12              # Half of failed conservative config
+learning_rate: 0.0003       # Lower LR for smaller batch
+max_samples: 2068           # Full training set
+
+# LoRA Parameters
+lora_r: 8                   # Back to baseline rank
+lora_alpha: 16              # Proportional scaling
+lora_dropout: 0.1           # Standard dropout
+
+# Optimization Parameters
+warmup_steps: 100           # Standard warmup
+max_grad_norm: 1.0          # Standard clipping
+
+# Learning Rate Scheduler
+start_factor: 0.1           # Standard warmup factor
+
+# Data Parameters
+val_split: 0.2
+random_seed: 42
+
+# Model Parameters
+torch_dtype: "float32"

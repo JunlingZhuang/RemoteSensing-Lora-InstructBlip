@@ -6,22 +6,22 @@ name: "grid_v2_medium_batch_high_rank"
 description: "Grid search V2: Medium batch with high LoRA rank for increased model capacity"
 
 # Training Parameters
-num_epochs: 8               # More epochs for higher capacity
-batch_size: 20              # Medium batch
-learning_rate: 0.0005       # Baseline LR
-max_samples: 2068           # Full training set
+num_epochs: 8 # More epochs for higher capacity
+batch_size: 10 # Reduced from 14 based on OOM analysis (Conservative for high rank)
+learning_rate: 0.0005 # Baseline LR
+max_samples: 2068 # Full training set
 
 # LoRA Parameters
-lora_r: 16                  # High rank for more capacity
-lora_alpha: 32              # Proportional scaling
-lora_dropout: 0.05          # Lower dropout
+lora_r: 16 # High rank for more capacity
+lora_alpha: 32 # Proportional scaling
+lora_dropout: 0.05 # Lower dropout
 
 # Optimization Parameters
-warmup_steps: 150           # Extended warmup
-max_grad_norm: 0.5          # Tighter clipping
+warmup_steps: 150 # Extended warmup
+max_grad_norm: 0.5 # Tighter clipping
 
 # Learning Rate Scheduler
-start_factor: 0.05          # Conservative warmup
+start_factor: 0.05 # Conservative warmup
 
 # Data Parameters
 val_split: 0.2

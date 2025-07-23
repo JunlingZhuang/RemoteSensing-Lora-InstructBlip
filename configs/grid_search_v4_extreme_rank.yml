@@ -6,22 +6,22 @@ name: "grid_v4_extreme_rank"
 description: "Grid search V4: Extreme high LoRA rank experiment for maximum model capacity"
 
 # Training Parameters
-num_epochs: 10              # More epochs for high capacity
-batch_size: 16              # Smaller batch due to high rank
-learning_rate: 0.0002       # Lower LR for stability
-max_samples: 2068           # Full training set
+num_epochs: 10 # More epochs for high capacity
+batch_size: 8 # Reduced from 12 based on OOM analysis (Conservative for extreme rank)
+learning_rate: 0.0002 # Lower LR for stability
+max_samples: 2068 # Full training set
 
 # LoRA Parameters
-lora_r: 32                  # Extreme high rank
-lora_alpha: 64              # Proportional scaling
-lora_dropout: 0.02          # Very low dropout
+lora_r: 32 # Extreme high rank
+lora_alpha: 64 # Proportional scaling
+lora_dropout: 0.02 # Very low dropout
 
 # Optimization Parameters
-warmup_steps: 250           # Very extended warmup
-max_grad_norm: 0.3          # Very tight clipping
+warmup_steps: 250 # Very extended warmup
+max_grad_norm: 0.3 # Very tight clipping
 
 # Learning Rate Scheduler
-start_factor: 0.02          # Very conservative warmup
+start_factor: 0.02 # Very conservative warmup
 
 # Data Parameters
 val_split: 0.2

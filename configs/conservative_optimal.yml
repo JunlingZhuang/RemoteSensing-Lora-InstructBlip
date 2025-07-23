@@ -6,22 +6,22 @@ name: "conservative_optimal_lora_instructblip"
 description: "Conservative but optimal configuration for 48GB GPU. Based on proven hyperparameters with moderate scaling for stability and good performance."
 
 # Training Parameters
-num_epochs: 8               # Sufficient epochs for convergence
-batch_size: 24              # Conservative large batch (safe for 48GB)
-learning_rate: 0.0005       # Proven baseline LR
-max_samples: 2068           # Full training set
+num_epochs: 8 # Sufficient epochs for convergence
+batch_size: 12 # Further reduced from 16 (was 24 originally) based on OOM analysis
+learning_rate: 0.0005 # Proven baseline LR
+max_samples: 2068 # Full training set
 
 # LoRA Parameters
-lora_r: 12                  # Sweet spot between capacity and stability
-lora_alpha: 24              # Proportional scaling (2x rank)
-lora_dropout: 0.08          # Slightly lower dropout for better learning
+lora_r: 12 # Sweet spot between capacity and stability
+lora_alpha: 24 # Proportional scaling (2x rank)
+lora_dropout: 0.08 # Slightly lower dropout for better learning
 
 # Optimization Parameters
-warmup_steps: 120           # Adequate warmup for batch size
-max_grad_norm: 0.8          # Conservative gradient clipping
+warmup_steps: 120 # Adequate warmup for batch size
+max_grad_norm: 0.8 # Conservative gradient clipping
 
 # Learning Rate Scheduler
-start_factor: 0.08          # Conservative but not too slow warmup
+start_factor: 0.08 # Conservative but not too slow warmup
 
 # Data Parameters
 val_split: 0.2

@@ -1,15 +1,17 @@
-# Grid Search V1: Large Batch + High LR
+# Grid Search V1: Large Batch + High LR (SKIPPED - OOM Risk)
 # 48GB GPU Hyperparameter Tuning
+# STATUS: ❌ SKIPPED - Original batch_size=32 would cause OOM
+# ALTERNATIVE: Use V5 config instead
 
 # Configuration Metadata
-name: "grid_v1_large_batch_high_lr"
-description: "Grid search V1: Large batch size with higher learning rate for 48GB GPU"
+name: "grid_v1_large_batch_high_lr_SKIPPED"
+description: "Grid search V1: SKIPPED due to OOM risk. Original batch_size=32 too large for 48GB GPU with InstructBLIP+LoRA"
 
-# Training Parameters
+# Training Parameters (ORIGINAL - DO NOT USE)
 num_epochs: 6
-batch_size: 32              # Large batch for 48GB
-learning_rate: 0.001        # High LR
-max_samples: 2068           # Full training set
+batch_size: 12 # Further reduced from 16 based on OOM analysis (was originally 32)
+learning_rate: 0.0008 # Reduced from 0.001 for stability
+max_samples: 2068 # Full training set
 
 # LoRA Parameters
 lora_r: 8

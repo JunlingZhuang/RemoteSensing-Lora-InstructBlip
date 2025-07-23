@@ -1,0 +1,32 @@
+# Grid Search V5: Memory Optimized Configuration
+# 48GB GPU Hyperparameter Tuning
+# STATUS: ✅ SAFE - Designed based on OOM analysis
+
+# Configuration Metadata
+name: "grid_v5_memory_optimized"
+description: "Grid search V5: Memory optimized configuration based on OOM analysis. Conservative batch size with balanced hyperparameters."
+
+# Training Parameters
+num_epochs: 12 # More epochs to compensate for smaller batch
+batch_size: 6 # Very conservative batch size - safest option
+learning_rate: 0.0008 # Moderate-high LR to maintain training efficiency
+max_samples: 2068 # Full training set
+
+# LoRA Parameters
+lora_r: 16 # High capacity for good performance
+lora_alpha: 32 # Proportional scaling
+lora_dropout: 0.05 # Lower dropout for better learning
+
+# Optimization Parameters
+warmup_steps: 180 # Extended warmup for smaller batch
+max_grad_norm: 0.6 # Moderate clipping
+
+# Learning Rate Scheduler
+start_factor: 0.06 # Conservative warmup
+
+# Data Parameters
+val_split: 0.2
+random_seed: 42
+
+# Model Parameters
+torch_dtype: "float32"

@@ -1,27 +1,29 @@
-# Grid Search V3: Ultra Large Batch + Conservative
+# Grid Search V3: Ultra Large Batch + Conservative (SKIPPED - OOM Risk)
 # 48GB GPU Hyperparameter Tuning
+# STATUS: ❌ SKIPPED - Original batch_size=48 would cause OOM
+# ALTERNATIVE: Use V5 or Ultra Conservative config instead
 
 # Configuration Metadata
-name: "grid_v3_ultra_batch_conservative"
-description: "Grid search V3: Ultra large batch with conservative hyperparameters for stability"
+name: "grid_v3_ultra_batch_conservative_SKIPPED"
+description: "Grid search V3: SKIPPED due to OOM risk. Original batch_size=48 too large for 48GB GPU with InstructBLIP+LoRA"
 
-# Training Parameters
-num_epochs: 4               # Fewer epochs due to large batch
-batch_size: 48              # Ultra large batch (test 48GB limit)
-learning_rate: 0.0008       # Moderate-high LR for large batch
-max_samples: 2068           # Full training set
+# Training Parameters (MODIFIED - STILL RISKY)
+num_epochs: 4 # Fewer epochs due to large batch
+batch_size: 12 # Further reduced from 16 (was originally 48) - still may be risky
+learning_rate: 0.0006 # Reduced from 0.0008 for stability
+max_samples: 2068 # Full training set
 
 # LoRA Parameters
-lora_r: 8                   # Conservative rank
+lora_r: 8 # Conservative rank
 lora_alpha: 16
 lora_dropout: 0.1
 
 # Optimization Parameters
-warmup_steps: 200           # Extended warmup for large batch
-max_grad_norm: 0.8          # Moderate clipping
+warmup_steps: 200 # Extended warmup for large batch
+max_grad_norm: 0.8 # Moderate clipping
 
 # Learning Rate Scheduler
-start_factor: 0.05          # Very conservative warmup
+start_factor: 0.05 # Very conservative warmup
 
 # Data Parameters
 val_split: 0.2
