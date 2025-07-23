@@ -244,12 +244,128 @@ TRAINING_CONFIG = {
 
 ---
 
-## 🔄 下一步计划
+## 🔄 48GB GPU Grid Search 实验计划
 
-1. **验证当前配置** (lr=2e-4)
-2. **实现学习率调度** (cosine/linear decay)
-3. **尝试更大数据集** (扩展到全量数据)
-4. **对比不同 LoRA 配置** (系统性实验)
+### 实验设计概述
+
+基于前期调参经验，设计了针对 48GB GPU 的系统性超参数搜索实验。目标是充分利用大显存优势，探索最优的训练配置。
+
+### Grid Search 实验矩阵
+
+| 实验版本     | Batch Size | LoRA Rank | Learning Rate | Epochs | 策略重点       |
+| ------------ | ---------- | --------- | ------------- | ------ | -------------- |
+| V1           | 32         | 8         | 0.001         | 6      | 大批量高效训练 |
+| V2           | 20         | 16        | 0.0005        | 8      | 平衡容量与效率 |
+| V3           | 48         | 8         | 0.0008        | 4      | 极限批量测试   |
+| V4           | 16         | 32        | 0.0002        | 10     | 极限模型容量   |
+| Conservative | 24         | 12        | 0.0005        | 8      | 稳妥最优配置   |
+
+### 实验配置详情
+
+#### Grid Search V1: 大批量高效训练
+
+```yaml
+name: "grid_v1_large_batch_high_lr"
+batch_size: 32 # 3x基线，充分利用48GB
+learning_rate: 0.001 # 高LR配合大批量
+lora_r: 8 # 保守的rank
+max_samples: 2068 # 全量训练集
+warmup_steps: 100 # 适中预热
+```
+
+**假设**: 大批量能提供更稳定的梯度，支持更高学习率，加速收敛。
+
+#### Grid Search V2: 高 LoRA 秩实验
+
+```yaml
+name: "grid_v2_medium_batch_high_rank"
+batch_size: 20 # 中等批量
+learning_rate: 0.0005 # 基线LR
+lora_r: 16 # 2x基线rank
+lora_alpha: 32 # 比例缩放
+lora_dropout: 0.05 # 降低dropout
+warmup_steps: 150 # 延长预热
+```
+
+**假设**: 更高的 LoRA rank 提供更强的表达能力，适合复杂的遥感 VQA 任务。
+
+#### Grid Search V3: 极限批量测试
+
+```yaml
+name: "grid_v3_ultra_batch_conservative"
+batch_size: 48 # 测试48GB极限
+learning_rate: 0.0008 # 适中偏高LR
+lora_r: 8 # 保守rank
+epochs: 4 # 减少epoch
+warmup_steps: 200 # 大批量需要长预热
+start_factor: 0.05 # 非常保守的预热
+```
+
+**假设**: 极大批量可能达到更好的收敛效果，但需要保守的其他参数。
+
+#### Grid Search V4: 极限模型容量
+
+```yaml
+name: "grid_v4_extreme_rank"
+batch_size: 16 # 较小批量适应高rank
+learning_rate: 0.0002 # 低LR确保稳定
+lora_r: 32 # 4x基线rank
+lora_alpha: 64 # 比例缩放
+lora_dropout: 0.02 # 极低dropout
+epochs: 10 # 更多epoch
+warmup_steps: 250 # 长预热
+```
+
+**假设**: 极高的模型容量能学习更复杂的视觉-语言映射，但需要更保守的训练策略。
+
+#### Conservative Optimal: 稳妥最优
+
+```yaml
+name: "conservative_optimal_lora_instructblip"
+batch_size: 24 # 安全的大批量
+learning_rate: 0.0005 # 验证过的LR
+lora_r: 12 # 容量与稳定性平衡点
+lora_alpha: 24 # 比例缩放
+lora_dropout: 0.08 # 适度正则化
+epochs: 8 # 充分训练
+```
+
+**假设**: 基于前期经验的最佳平衡配置，预期效果最稳定。
+
+### 实验执行计划
+
+1. **Phase 1**: 运行 Conservative Optimal，建立稳定基线
+2. **Phase 2**: 并行运行 Grid Search V1-V4
+3. **Phase 3**: 分析结果，识别最优配置
+4. **Phase 4**: 基于最佳配置进行精细调优
+
+### 评估指标
+
+- **训练稳定性**: 是否出现 NaN，loss 曲线平滑度
+- **收敛速度**: 达到目标 loss 所需 epoch 数
+- **最终性能**: RSIEval VQA 准确率
+- **资源效率**: GPU 利用率，训练时间
+- **泛化能力**: 训练 vs 验证 loss 差距
+
+### 实验状态跟踪
+
+| 实验版本     | 状态      | 开始时间 | 完成时间 | 最佳验证 Loss | RSIEval 准确率 | 备注         |
+| ------------ | --------- | -------- | -------- | ------------- | -------------- | ------------ |
+| Conservative | ⏳ 待运行 | -        | -        | -             | -              | 基线配置     |
+| Grid V1      | ⏳ 待运行 | -        | -        | -             | -              | 大批量实验   |
+| Grid V2      | ⏳ 待运行 | -        | -        | -             | -              | 高 rank 实验 |
+| Grid V3      | ⏳ 待运行 | -        | -        | -             | -              | 极限批量     |
+| Grid V4      | ⏳ 待运行 | -        | -        | -             | -              | 极限容量     |
+
+### 预期结果分析
+
+基于理论分析，预期各配置的表现：
+
+1. **Conservative**: 最稳定，中等性能，推荐作为基线
+2. **Grid V1**: 训练快速，可能性能良好，但需验证稳定性
+3. **Grid V2**: 性能可能最佳，但训练时间较长
+4. **Grid V3**: 极限测试，可能内存不足或不稳定
+5. **Grid V4**: 理论性能最佳，但风险最高
 
 ---
 

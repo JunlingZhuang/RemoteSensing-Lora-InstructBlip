@@ -1,0 +1,31 @@
+# Grid Search V3: Ultra Large Batch + Conservative
+# 48GB GPU Hyperparameter Tuning
+
+# Configuration Metadata
+name: "grid_v3_ultra_batch_conservative"
+description: "Grid search V3: Ultra large batch with conservative hyperparameters for stability"
+
+# Training Parameters
+num_epochs: 4               # Fewer epochs due to large batch
+batch_size: 48              # Ultra large batch (test 48GB limit)
+learning_rate: 0.0008       # Moderate-high LR for large batch
+max_samples: 2068           # Full training set
+
+# LoRA Parameters
+lora_r: 8                   # Conservative rank
+lora_alpha: 16
+lora_dropout: 0.1
+
+# Optimization Parameters
+warmup_steps: 200           # Extended warmup for large batch
+max_grad_norm: 0.8          # Moderate clipping
+
+# Learning Rate Scheduler
+start_factor: 0.05          # Very conservative warmup
+
+# Data Parameters
+val_split: 0.2
+random_seed: 42
+
+# Model Parameters
+torch_dtype: "float32"

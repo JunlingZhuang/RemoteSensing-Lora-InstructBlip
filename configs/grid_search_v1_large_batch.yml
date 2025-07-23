@@ -1,0 +1,31 @@
+# Grid Search V1: Large Batch + High LR
+# 48GB GPU Hyperparameter Tuning
+
+# Configuration Metadata
+name: "grid_v1_large_batch_high_lr"
+description: "Grid search V1: Large batch size with higher learning rate for 48GB GPU"
+
+# Training Parameters
+num_epochs: 6
+batch_size: 32              # Large batch for 48GB
+learning_rate: 0.001        # High LR
+max_samples: 2068           # Full training set
+
+# LoRA Parameters
+lora_r: 8
+lora_alpha: 16
+lora_dropout: 0.1
+
+# Optimization Parameters
+warmup_steps: 100
+max_grad_norm: 1.0
+
+# Learning Rate Scheduler
+start_factor: 0.1
+
+# Data Parameters
+val_split: 0.2
+random_seed: 42
+
+# Model Parameters
+torch_dtype: "float32"
