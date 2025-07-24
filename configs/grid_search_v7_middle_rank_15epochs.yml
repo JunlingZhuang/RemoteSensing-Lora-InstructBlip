@@ -1,0 +1,29 @@
+name: "grid_search_v7_middle_rank_15epochs"
+description: "Grid search configuration for higher LoRA and wider batch"
+# lora_r: 24
+# lora_alpha: 48
+# num_epochs: 15
+# Training Parameters
+num_epochs: 8 # More epochs for high capacity
+batch_size: 15 # more batch per step
+learning_rate: 0.0003 # Slightly faster learning
+max_samples: 2068 # Full training set
+
+# LoRA Parameters
+lora_r: 24 # Moderate higher LoRA rank
+lora_alpha: 48 # Maintain higher ratio
+lora_dropout: 0.05 # Moderate dropout
+
+# Optimization Parameters
+warmup_steps: 150 # Very extended warmup
+max_grad_norm: 0.5 # Very tight clipping
+
+# Learning Rate Scheduler
+start_factor: 0.05 # Very conservative warmup
+
+# Data Parameters
+val_split: 0.2
+random_seed: 42
+
+# Model Parameters
+torch_dtype: "float32"
