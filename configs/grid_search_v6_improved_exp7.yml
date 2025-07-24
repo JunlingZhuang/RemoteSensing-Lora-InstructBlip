@@ -1,0 +1,35 @@
+# Grid V6 Experiment 7: Conservative Rank + Medium Alpha + High Dropout + Cosine
+# 实验组合: r=16, alpha=48, dropout=0.1, scheduler=cosine
+
+name: "grid_v6_exp7_r16_a48_d10_cosine"
+description: "V6 Exp7: Conservative rank with medium alpha, high dropout, cosine scheduler"
+
+# Training Parameters
+num_epochs: 15
+batch_size: 8
+learning_rate: 0.0002 # Higher LR (Group B)
+max_samples: 2068
+
+# LoRA Parameters (Group 1: Conservative + Medium Alpha)
+lora_r: 16 # Conservative rank
+lora_alpha: 48 # Medium alpha (3:1 ratio)
+lora_dropout: 0.1 # High dropout
+
+# Optimization Parameters
+warmup_steps: 250
+max_grad_norm: 0.3
+
+# Scheduler (Group 1: Cosine)
+scheduler_type: "cosine"
+min_lr: 1e-6
+cosine_restarts: false
+
+# Early Stopping
+early_stopping_enabled: true
+early_stopping_patience: 3
+min_delta: 0.001
+
+# Data Parameters
+val_split: 0.2
+random_seed: 42
+torch_dtype: "float32"

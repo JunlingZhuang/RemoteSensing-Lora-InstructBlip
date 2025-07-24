@@ -13,6 +13,10 @@ from torch.optim.lr_scheduler import LinearLR, CosineAnnealingLR, ConstantLR
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
+# Import new modules
+from .early_stopping import EarlyStopping
+from .scheduler_factory import create_scheduler, print_scheduler_info, get_current_lr
+
 
 class LoRATrainer:
     """Simple trainer for LoRA fine-tuning"""
@@ -30,14 +34,11 @@ class LoRATrainer:
             weight_decay=config.weight_decay
         )
         
-        # Setup LinearLR scheduler with configurable start_factor
-        total_steps = len(train_loader) * config.num_epochs
-        start_factor = getattr(config, 'start_factor', 0.1)  # Default to 0.1 if not set
-        self.scheduler = LinearLR(
-            self.optimizer,
-            start_factor=start_factor,
-            total_iters=config.warmup_steps
+        # Setup learning rate scheduler using factory
+        self.scheduler, self.scheduler_info = create_scheduler(
+            self.optimizer, config, train_loader
         )
+        print_scheduler_info(self.scheduler_info)
         
         # Loss tracking
         self.train_losses = []
@@ -45,7 +46,19 @@ class LoRATrainer:
         self.epoch_times = []
         self.learning_rates = []  # Track learning rate changes
         self.epoch_details = []   # Detailed epoch information
-        
+
+        # Early stopping setup
+        self.early_stopping = None
+        if getattr(config, 'early_stopping_enabled', False):
+            self.early_stopping = EarlyStopping(
+                patience=getattr(config, 'early_stopping_patience', 3),
+                min_delta=getattr(config, 'min_delta', 0.001),
+                restore_best_weights=True,
+                verbose=True
+            )
+            print(f"🛑 Early stopping enabled: patience={self.early_stopping.patience}, "
+                  f"min_delta={self.early_stopping.min_delta}")
+
         # Create save directory
         os.makedirs(config.save_dir, exist_ok=True)
         
@@ -211,24 +224,35 @@ class LoRATrainer:
             self.train_losses.append(train_loss)
             self.val_losses.append(val_loss)
             self.epoch_times.append(epoch_time)
-            
+
             # Save best model
             if val_loss < best_val_loss:
                 best_val_loss = val_loss
                 best_model_path = os.path.join(self.config.save_dir, "best_model")
                 self.model.save_pretrained(best_model_path)
                 print(f"New best model saved! Val loss: {val_loss:.4f}")
-            
+
+            # Check early stopping
+            if self.early_stopping is not None:
+                should_stop = self.early_stopping(val_loss, self.model.model, epoch + 1)
+                if should_stop:
+                    print(f"🛑 Early stopping triggered at epoch {epoch + 1}")
+                    # Restore best model weights
+                    self.early_stopping.restore_best_model(self.model.model)
+                    break
+
             # Save checkpoint every epoch if configured
             if self.config.save_every_epoch:
                 checkpoint_path = os.path.join(self.config.save_dir, f"epoch_{epoch + 1}")
                 self.model.save_pretrained(checkpoint_path)
-            
+
             print(f"Epoch {epoch + 1} summary:")
             print(f"  Train Loss: {train_loss:.4f}")
             print(f"  Val Loss: {val_loss:.4f}")
             print(f"  Time: {epoch_time:.2f}s")
             print(f"  Memory: {self.model.get_memory_usage()}")
+            if self.early_stopping is not None:
+                print(f"  Early Stop Counter: {self.early_stopping.counter}/{self.early_stopping.patience}")
         
         # Final summary
         self.print_summary()

@@ -1,0 +1,34 @@
+# Grid V6 Experiment 5: High Rank + High Alpha + Low Dropout + Linear
+# 实验组合: r=32, alpha=64, dropout=0.05, scheduler=linear
+
+name: "grid_v6_exp5_r32_a64_d05_linear"
+description: "V6 Exp5: High rank with high alpha, low dropout, linear scheduler"
+
+# Training Parameters
+num_epochs: 15
+batch_size: 8
+learning_rate: 0.0001 # Conservative LR (Group A) - 高rank需要低LR
+max_samples: 2068
+
+# LoRA Parameters (Group 3: High - Original Grid V4)
+lora_r: 32 # High rank (original Grid V4)
+lora_alpha: 64 # High alpha (2:1 ratio)
+lora_dropout: 0.05 # Low dropout
+
+# Optimization Parameters
+warmup_steps: 250
+max_grad_norm: 0.3
+
+# Scheduler (Group 2: Linear)
+scheduler_type: "linear"
+start_factor: 0.1
+
+# Early Stopping
+early_stopping_enabled: true
+early_stopping_patience: 3
+min_delta: 0.001
+
+# Data Parameters
+val_split: 0.2
+random_seed: 42
+torch_dtype: "float32"

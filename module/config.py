@@ -27,6 +27,17 @@ class Config:
         self.warmup_steps = 100
         self.weight_decay = 0.0
         self.max_grad_norm = 0.5  # Gradient clipping for stability
+
+        # Learning Rate Scheduler settings
+        self.scheduler_type = "linear"  # Options: "linear", "cosine", "constant"
+        self.start_factor = 0.1  # For linear scheduler warmup
+        self.min_lr = 1e-7  # Minimum learning rate for cosine scheduler
+        self.cosine_restarts = False  # Whether to use cosine annealing with restarts
+
+        # Early Stopping settings
+        self.early_stopping_patience = 3  # 验证loss不改善3个epoch就停止
+        self.min_delta = 0.001  # 最小改善阈值
+        self.early_stopping_enabled = False  # 默认关闭，可在配置文件中启用
         
         # Data settings (80/20 split from plan)
         self.train_split = 0.8

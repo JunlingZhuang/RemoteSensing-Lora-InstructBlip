@@ -1,0 +1,39 @@
+# Test Configuration: Cosine Scheduler + Early Stopping
+# For testing new scheduler and early stopping features
+
+# Configuration Metadata
+name: "test_cosine_early_stop"
+description: "Test configuration for cosine scheduler and early stopping mechanism"
+
+# Training Parameters
+num_epochs: 15 # More epochs to test early stopping
+batch_size: 8
+learning_rate: 0.0001 # Lower LR for cosine scheduler
+max_samples: 200 # Small dataset for quick testing
+
+# LoRA Parameters
+lora_r: 16
+lora_alpha: 32
+lora_dropout: 0.1
+
+# Optimization Parameters
+warmup_steps: 50
+max_grad_norm: 0.5
+
+# Learning Rate Scheduler (NEW)
+scheduler_type: "cosine" # Options: "linear", "cosine", "constant"
+start_factor: 0.1 # For linear scheduler
+min_lr: 1e-6 # Minimum LR for cosine scheduler
+cosine_restarts: false # Whether to use warm restarts
+
+# Early Stopping (NEW)
+early_stopping_enabled: true
+early_stopping_patience: 3 # Stop if no improvement for 3 epochs
+min_delta: 0.001 # Minimum improvement threshold
+
+# Data Parameters
+val_split: 0.2
+random_seed: 42
+
+# Model Parameters
+torch_dtype: "float32"

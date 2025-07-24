@@ -1,0 +1,39 @@
+# Grid Search V4 Improved: Extreme Rank + Cosine Scheduler + Early Stopping
+# 基于Grid V4过拟合问题的改进版本
+
+# Configuration Metadata
+name: "grid_v4_improved"
+description: "Grid V4 with cosine scheduler and early stopping to address overfitting"
+
+# Training Parameters
+num_epochs: 15 # 更多epoch，依赖早停机制
+batch_size: 8 # 保持与原Grid V4相同
+learning_rate: 0.0001 # 降低学习率 (原来是2e-4)
+max_samples: 2068 # Full training set
+
+# LoRA Parameters
+lora_r: 32 # 保持极高rank
+lora_alpha: 64 # 保持2:1比例
+lora_dropout: 0.1 # 增加dropout (原来是0.02)
+
+# Optimization Parameters
+warmup_steps: 250 # 保持原有warmup
+max_grad_norm: 0.3 # 保持原有梯度裁剪
+
+# Learning Rate Scheduler (NEW)
+scheduler_type: "cosine" # 使用余弦调度器
+start_factor: 0.1 # 对linear scheduler的兼容性
+min_lr: 1e-6 # 余弦调度器的最小学习率
+cosine_restarts: false # 不使用warm restarts
+
+# Early Stopping (NEW)
+early_stopping_enabled: true # 启用早停
+early_stopping_patience: 3 # 验证loss不改善3个epoch就停止
+min_delta: 0.001 # 最小改善阈值
+
+# Data Parameters
+val_split: 0.2
+random_seed: 42
+
+# Model Parameters
+torch_dtype: "float32"
