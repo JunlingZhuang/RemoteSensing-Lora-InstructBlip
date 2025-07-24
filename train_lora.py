@@ -32,6 +32,15 @@ os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
 # Define which config files to run (can be single or multiple)
 CONFIG_FILES = [
     "configs/baseline_lora_instructblip.yml",
+    # Grid Search V6 Improved Experiments - Comprehensive Parameter Analysis
+    "configs/grid_search_v6_improved_exp1.yml",  # r=16, α=64, d=0.05, cosine, lr=1e-4
+    "configs/grid_search_v6_improved_exp2.yml",  # r=16, α=32, d=0.1, linear, lr=2e-4
+    "configs/grid_search_v6_improved_exp3.yml",  # r=24, α=64, d=0.1, linear, lr=1e-4
+    "configs/grid_search_v6_improved_exp4.yml",  # r=24, α=32, d=0.05, cosine, lr=2e-4
+    "configs/grid_search_v6_improved_exp5.yml",  # r=32, α=64, d=0.05, linear, lr=1e-4
+    "configs/grid_search_v6_improved_exp6.yml",  # r=32, α=32, d=0.1, cosine, lr=2e-4
+    "configs/grid_search_v6_improved_exp7.yml",  # r=16, α=48, d=0.1, cosine, lr=2e-4
+    "configs/grid_search_v6_improved_exp8.yml",  # r=32, α=48, d=0.05, linear, lr=1e-4
     # "configs/high_lr_experiment.yml",  # Add more configs here
     # "configs/large_batch_experiment.yml",
 ]
