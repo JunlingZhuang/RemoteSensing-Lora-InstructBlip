@@ -70,7 +70,7 @@ class ModelInferencer:
         """Load LoRA fine-tuned model"""
         if not self.model_path or not os.path.exists(self.model_path):
             raise FileNotFoundError(f"LoRA model path not found: {self.model_path}")
-        
+
         # Load base InstructBLIP model
         print("Loading base InstructBLIP model...")
         base_model = InstructBlipForConditionalGeneration.from_pretrained(
@@ -78,16 +78,62 @@ class ModelInferencer:
             torch_dtype=torch.float16,
             device_map="auto"
         )
-        
-        # Load LoRA weights
+
+        # Load LoRA weights with error handling for config issues
         print(f"Loading LoRA weights from {self.model_path}...")
-        self.model = PeftModel.from_pretrained(base_model, self.model_path)
-        
+        try:
+            self.model = PeftModel.from_pretrained(base_model, self.model_path)
+        except Exception as e:
+            if "corda_config" in str(e):
+                print("⚠️  Detected 'corda_config' error - attempting to fix adapter config...")
+                self._fix_adapter_config(self.model_path)
+                # Retry loading after fix
+                self.model = PeftModel.from_pretrained(base_model, self.model_path)
+            else:
+                raise e
+
         # Load processor
         self.processor = InstructBlipProcessor.from_pretrained(self.config.model_name)
-        
+
         print("LoRA model loaded successfully!")
-    
+
+    def _fix_adapter_config(self, model_path):
+        """Fix adapter_config.json by removing invalid parameters"""
+        import json
+
+        adapter_config_path = os.path.join(model_path, "adapter_config.json")
+        if not os.path.exists(adapter_config_path):
+            return
+
+        print(f"Fixing adapter config at {adapter_config_path}...")
+
+        # Read current config
+        with open(adapter_config_path, 'r') as f:
+            config = json.load(f)
+
+        # Remove invalid/incompatible parameters
+        invalid_params = [
+            'corda_config', 'eva_config', 'exclude_modules', 'layer_replication',
+            'layers_pattern', 'layers_to_transform', 'megatron_config', 'megatron_core',
+            'qalora_group_size', 'trainable_token_indices', 'use_dora', 'use_qalora',
+            'use_rslora', 'loftq_config', 'alpha_pattern', 'rank_pattern'
+        ]
+
+        fixed = False
+        for param in invalid_params:
+            if param in config:
+                print(f"Removing invalid parameter: {param}")
+                del config[param]
+                fixed = True
+
+        # Write back fixed config
+        if fixed:
+            with open(adapter_config_path, 'w') as f:
+                json.dump(config, f, indent=2)
+            print("✅ Adapter config fixed!")
+        else:
+            print("No invalid parameters found in adapter config.")
+
     def _load_instructblip_model(self):
         """Load native InstructBLIP model"""
         model_name = self.config.model_name

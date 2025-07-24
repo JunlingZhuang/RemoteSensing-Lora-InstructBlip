@@ -1,12 +1,51 @@
 #!/usr/bin/env python3
 """
-Evaluate native InstructBLIP on RSIEval VQA dataset.
+Evaluate models on RSIEval VQA dataset.
+
+USAGE COMMANDS:
+
+1. Evaluate native InstructBLIP (baseline):
+   python evaluate_rsieval.py --model-type instructblip
+
+2. Evaluate native BLIP-2 (baseline):
+   python evaluate_rsieval.py --model-type blip2
+
+3. Evaluate custom LoRA model:
+   python evaluate_rsieval.py --model-type lora --lora-checkpoint path/to/checkpoint.pth
+
+4. Quick test with limited samples:
+   python evaluate_rsieval.py --model-type lora --lora-checkpoint path/to/checkpoint.pth --max-samples 50
+
+5. Custom output path:
+   python evaluate_rsieval.py --model-type lora --lora-checkpoint path/to/checkpoint.pth -o results/my_results.json
+
+6. Custom RSIEval dataset path:
+   python evaluate_rsieval.py --rsieval-path /path/to/RSIEval --model-type instructblip
+
+EXAMPLES:
+
+# Evaluate Ultra Conservative LoRA model
+python evaluate_rsieval.py --model-type lora --lora-checkpoint checkpoints/ultra_conservative_epoch_10.pth
+
+# Quick test of V5 Memory Optimized model
+python evaluate_rsieval.py --model-type lora --lora-checkpoint checkpoints/grid_v5_memory_optimized_epoch_12.pth --max-samples 100
+
+# Compare with native InstructBLIP baseline
+python evaluate_rsieval.py --model-type instructblip --max-samples 100
+
+OUTPUT:
+- Accuracy by question type (scene, object, attribute, etc.)
+- Overall accuracy percentage
+- Sample VQA results
+- Detailed JSON results file
+
 """
 
 import os
 import json
 import argparse
 import sys
+import torch
 from pathlib import Path
 from tqdm import tqdm
 
@@ -16,6 +55,98 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'module'))
 from config import Config
 from data.rsicap_dataset import load_rsieval_vqa_data
 from inference.inferencer import ModelInferencer
+
+
+def fix_lora_adapter_config(checkpoint_path):
+    """
+    统一修复 LoRA adapter_config.json 文件中的不兼容参数
+
+    Args:
+        checkpoint_path: LoRA checkpoint 路径
+    """
+    adapter_config_path = os.path.join(checkpoint_path, "adapter_config.json")
+    if not os.path.exists(adapter_config_path):
+        print(f"⚠️  adapter_config.json not found at {adapter_config_path}")
+        return False
+
+    try:
+        # 读取当前配置
+        with open(adapter_config_path, 'r', encoding='utf-8') as f:
+            config = json.load(f)
+
+        # 定义需要移除的不兼容参数
+        invalid_params = [
+            'corda_config', 'eva_config', 'exclude_modules', 'layer_replication',
+            'layers_pattern', 'layers_to_transform', 'megatron_config', 'megatron_core',
+            'qalora_group_size', 'trainable_token_indices', 'use_dora', 'use_qalora',
+            'use_rslora', 'loftq_config', 'alpha_pattern', 'rank_pattern', 'lora_bias'
+        ]
+
+        # 检查并移除无效参数
+        removed_params = []
+        for param in invalid_params:
+            if param in config:
+                removed_params.append(param)
+                del config[param]
+
+        # 如果有参数被移除，保存修复后的配置
+        if removed_params:
+            print(f"🔧 Fixing adapter_config.json...")
+            print(f"   Removing invalid parameters: {', '.join(removed_params)}")
+
+            # 备份原文件
+            backup_path = adapter_config_path + ".backup"
+            if not os.path.exists(backup_path):
+                import shutil
+                shutil.copy2(adapter_config_path, backup_path)
+                print(f"   Backup saved to: {backup_path}")
+
+            # 保存修复后的配置
+            with open(adapter_config_path, 'w', encoding='utf-8') as f:
+                json.dump(config, f, indent=2, ensure_ascii=False)
+
+            print(f"✅ adapter_config.json fixed successfully!")
+            return True
+        else:
+            print(f"✅ adapter_config.json is already compatible")
+            return False
+
+    except Exception as e:
+        print(f"❌ Error fixing adapter_config.json: {e}")
+        return False
+
+
+def fix_all_lora_configs_in_directory(checkpoint_dir):
+    """
+    修复目录中所有可能的 LoRA 配置文件
+
+    Args:
+        checkpoint_dir: checkpoint 目录路径
+    """
+    print(f"🔍 Scanning for LoRA configs in: {checkpoint_dir}")
+
+    if not os.path.exists(checkpoint_dir):
+        print(f"❌ Checkpoint directory not found: {checkpoint_dir}")
+        return
+
+    fixed_count = 0
+
+    # 遍历目录中的所有子目录和文件
+    for root, dirs, files in os.walk(checkpoint_dir):
+        for file in files:
+            if file == "adapter_config.json":
+                config_path = os.path.join(root, file)
+                print(f"   Found adapter_config.json: {config_path}")
+
+                # 修复这个配置文件
+                parent_dir = os.path.dirname(config_path)
+                if fix_lora_adapter_config(parent_dir):
+                    fixed_count += 1
+
+    if fixed_count > 0:
+        print(f"✅ Fixed {fixed_count} LoRA configuration file(s)")
+    else:
+        print(f"✅ All LoRA configurations are compatible")
 
 
 def evaluate_model_vqa_on_rsieval(rsieval_path, model_type="instructblip", lora_checkpoint=None, output_path=None, max_samples=None):
@@ -46,6 +177,19 @@ def evaluate_model_vqa_on_rsieval(rsieval_path, model_type="instructblip", lora_
     if model_type == "lora":
         if not lora_checkpoint:
             raise ValueError("LoRA checkpoint path required for model_type='lora'")
+
+        # 统一修复 LoRA 配置文件
+        print(f"🔍 Checking LoRA checkpoint: {lora_checkpoint}")
+
+        # 如果是单个 checkpoint，直接修复
+        if os.path.isdir(lora_checkpoint):
+            fix_lora_adapter_config(lora_checkpoint)
+        else:
+            # 如果是 checkpoint 目录的父目录，扫描所有子目录
+            checkpoint_parent = os.path.dirname(lora_checkpoint)
+            if os.path.exists(checkpoint_parent):
+                fix_all_lora_configs_in_directory(checkpoint_parent)
+
         print(f"Initializing LoRA model from checkpoint: {lora_checkpoint}")
         inferencer = ModelInferencer(model_type="lora", model_path=lora_checkpoint)
         model_name = f"lora_{os.path.basename(lora_checkpoint)}"
@@ -75,7 +219,7 @@ def evaluate_model_vqa_on_rsieval(rsieval_path, model_type="instructblip", lora_
         try:
             # Generate answer using the question as prompt
             generated_answer = inferencer.generate_caption(
-                image_path, 
+                image_path,
                 sample['question'],  # Use question as prompt
                 max_new_tokens=300,  # RSGPT用这个
                 num_beams=1,         # RSGPT对话用1
@@ -84,6 +228,11 @@ def evaluate_model_vqa_on_rsieval(rsieval_path, model_type="instructblip", lora_
                 repetition_penalty=1.0,  # RSGPT对话用1.0
                 temperature=1.0
             )
+
+            # Clear GPU cache periodically to prevent memory accumulation
+            if (i + 1) % 50 == 0:
+                torch.cuda.empty_cache()
+                print(f"🧹 GPU cache cleared at sample {i + 1}")
             
             # Simple answer matching (case-insensitive)
             # Remove punctuation for better matching
@@ -122,7 +271,26 @@ def evaluate_model_vqa_on_rsieval(rsieval_path, model_type="instructblip", lora_
                 print("-" * 40)
         
         except Exception as e:
-            print(f"Error processing sample {i}: {e}")
+            print(f"❌ Error processing sample {i} ({sample['filename']}): {e}")
+            print(f"   Question: {sample['question']}")
+
+            # Save partial results if we've processed a significant number
+            if len(results) >= 50 and (i + 1) % 100 == 0:
+                partial_output_path = output_path.replace('.json', f'_partial_{i+1}.json') if output_path else f"partial_results_{i+1}.json"
+                print(f"💾 Saving partial results to {partial_output_path}")
+
+                partial_data = {
+                    "model_type": model_name,
+                    "dataset": "RSIEval_VQA",
+                    "processed_samples": i + 1,
+                    "successful_samples": len(results),
+                    "partial_accuracy": correct_answers / len(results) * 100 if results else 0,
+                    "results": results
+                }
+
+                with open(partial_output_path, 'w', encoding='utf-8') as f:
+                    json.dump(partial_data, f, ensure_ascii=False, indent=2)
+
             continue
     
     # Calculate final accuracy and type accuracies
