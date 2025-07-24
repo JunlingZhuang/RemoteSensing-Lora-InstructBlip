@@ -1,0 +1,48 @@
+# Core ML Libraries
+torch>=2.0.0
+torchvision>=0.15.0
+transformers>=4.30.0
+accelerate>=0.20.0
+datasets>=2.12.0
+
+# BLIP-2 and Vision-Language Models
+Pillow>=9.5.0
+opencv-python>=4.7.0
+
+# Parameter Efficient Fine-tuning
+peft>=0.4.0
+bitsandbytes>=0.39.0
+
+# Data Processing
+numpy>=1.24.0
+pandas>=2.0.0
+tqdm>=4.65.0
+requests>=2.31.0
+
+# Evaluation Metrics
+nltk>=3.8.0
+rouge-score>=0.1.2
+scikit-learn>=1.3.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Jupyter and Development
+jupyter>=1.0.0
+ipywidgets>=8.0.0
+notebook>=6.5.0
+
+# Monitoring and Logging
+tensorboard>=2.13.0
+wandb>=0.15.0
+tensorboardX>=2.6.0
+
+# Utilities
+PyYAML>=6.0
+jsonlines>=3.1.0
+python-dotenv>=1.0.0
+
+# Optional: For advanced features
+# gradio>=3.35.0  # For web interface
+# streamlit>=1.24.0  # Alternative web interface
