@@ -1,0 +1,32 @@
+# Quick test configuration for epoch 0 recording
+name: "quick_test_epoch0_v2"
+description: "Quick test to verify epoch 0 recording in training curves"
+
+# Training Parameters (minimal for quick test)
+num_epochs: 2
+batch_size: 2
+learning_rate: 0.0001
+max_samples: 10 # Very small for quick test
+
+# LoRA Parameters (minimal)
+lora_r: 4
+lora_alpha: 8
+lora_dropout: 0.1
+
+# Optimization Parameters
+warmup_steps: 5
+max_grad_norm: 0.5
+
+# Scheduler
+scheduler_type: "linear"
+start_factor: 0.1
+
+# Early Stopping (disabled)
+early_stopping_enabled: false
+
+# Data Parameters
+val_split: 0.2
+random_seed: 42
+
+# Model Parameters
+torch_dtype: "float32"

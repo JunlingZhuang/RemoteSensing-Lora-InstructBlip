@@ -140,16 +140,21 @@ class LoRATrainer:
 
         return avg_train_loss, epoch_time
     
-    def validate(self, epoch):
+    def validate(self, epoch, is_initial=False):
         """Validate the model with progress bar"""
         self.model.eval()
         total_loss = 0
         num_batches = 0
 
         # Create simple validation progress bar
+        if epoch == -1 or is_initial:
+            desc = "Initial Eval"
+        else:
+            desc = "Validation"
+
         val_pbar = tqdm(
             self.val_loader,
-            desc="Validation",
+            desc=desc,
             leave=False
         )
 
@@ -186,19 +191,43 @@ class LoRATrainer:
             print("WARNING: No valid validation batches processed!")
 
         # Store validation history
-        self.val_losses.append(avg_val_loss)
+        if epoch == -1:
+            # For initial evaluation (epoch -1), don't record to trainer's internal lists
+            # train_lora.py will handle the recording
+            pass
+        elif is_initial:
+            # For initial evaluation (epoch 0), record as epoch 0
+            self.train_losses.append(avg_val_loss)  # Use validation loss as proxy for initial training loss
+            self.val_losses.append(avg_val_loss)
+            self.learning_rates.append(self.config.learning_rate)  # Use config learning rate
+            self.epoch_times.append(0)  # No training time for initial evaluation
 
-        # Record detailed epoch information
-        epoch_info = {
-            "epoch": len(self.train_losses),
-            "train_loss": self.train_losses[-1],
-            "val_loss": avg_val_loss,
-            "learning_rate": self.learning_rates[-1] if self.learning_rates else 0,
-            "epoch_time": self.epoch_times[-1] if self.epoch_times else 0,
-            "train_batches": len(self.train_loader),
-            "val_batches": len(self.val_loader)
-        }
-        self.epoch_details.append(epoch_info)
+            # Record detailed epoch information for epoch 0
+            epoch_info = {
+                "epoch": 0,
+                "train_loss": avg_val_loss,  # Use validation loss as proxy
+                "val_loss": avg_val_loss,
+                "learning_rate": self.config.learning_rate,
+                "epoch_time": 0,
+                "train_batches": 0,  # No training batches for initial evaluation
+                "val_batches": len(self.val_loader)
+            }
+            self.epoch_details.append(epoch_info)
+        else:
+            # For regular training epochs
+            self.val_losses.append(avg_val_loss)
+
+            # Record detailed epoch information
+            epoch_info = {
+                "epoch": len(self.train_losses),
+                "train_loss": self.train_losses[-1],
+                "val_loss": avg_val_loss,
+                "learning_rate": self.learning_rates[-1] if self.learning_rates else 0,
+                "epoch_time": self.epoch_times[-1] if self.epoch_times else 0,
+                "train_batches": len(self.train_loader),
+                "val_batches": len(self.val_loader)
+            }
+            self.epoch_details.append(epoch_info)
 
         print(f"📈 Validation loss: {avg_val_loss:.4f}")
         print(f"🔢 Processed {num_batches}/{len(self.val_loader)} valid validation batches")
@@ -212,7 +241,12 @@ class LoRATrainer:
         print(f"\nInitial memory usage: {self.model.get_memory_usage()}")
         
         best_val_loss = float('inf')
-        
+
+        # Record initial loss at epoch 0 (before training)
+        print("\n=== Epoch 0 (Initial State) ===")
+        initial_val_loss = self.validate(0, is_initial=True)  # Use epoch 0 with special flag
+        print(f"📊 Initial loss: {initial_val_loss:.4f}")
+
         for epoch in range(self.config.num_epochs):
             # Train
             train_loss, epoch_time = self.train_epoch(epoch)
@@ -282,31 +316,72 @@ class LoRATrainer:
         """Plot training and validation losses with learning rate"""
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
 
-        epochs = range(1, len(self.train_losses) + 1)
+        # Try to read complete data from training_history.json (includes epoch 0)
+        history_file = os.path.join(self.config.save_dir, "training_history.json")
+        if os.path.exists(history_file):
+            try:
+                with open(history_file, 'r', encoding='utf-8') as f:
+                    history = json.load(f)
+
+                epochs_data = history.get("epochs", [])
+                if epochs_data:
+                    epochs = [ep["epoch"] for ep in epochs_data]
+                    train_losses = [ep["train_loss"] for ep in epochs_data]
+                    val_losses = [ep["val_loss"] for ep in epochs_data]
+                    learning_rates = [ep.get("learning_rate", 0) for ep in epochs_data]
+                else:
+                    # Fallback to trainer's internal data
+                    epochs = range(0, len(self.train_losses))
+                    train_losses = self.train_losses
+                    val_losses = self.val_losses
+                    learning_rates = self.learning_rates
+            except Exception as e:
+                print(f"Warning: Could not read training history: {e}")
+                # Fallback to trainer's internal data
+                epochs = range(0, len(self.train_losses))
+                train_losses = self.train_losses
+                val_losses = self.val_losses
+                learning_rates = self.learning_rates
+        else:
+            # Fallback to trainer's internal data
+            epochs = range(0, len(self.train_losses))
+            train_losses = self.train_losses
+            val_losses = self.val_losses
+            learning_rates = self.learning_rates
 
         # Plot 1: Loss curves
-        ax1.plot(epochs, self.train_losses, 'b-', label='Training Loss', marker='o', linewidth=2)
-        ax1.plot(epochs, self.val_losses, 'r-', label='Validation Loss', marker='s', linewidth=2)
+        ax1.plot(epochs, train_losses, 'b-', label='Training Loss', marker='o', linewidth=2)
+        ax1.plot(epochs, val_losses, 'r-', label='Validation Loss', marker='s', linewidth=2)
 
         # Mark best validation loss
-        best_epoch = self.val_losses.index(min(self.val_losses)) + 1
-        best_val_loss = min(self.val_losses)
-        ax1.axvline(x=best_epoch, color='gray', linestyle='--', alpha=0.7)
-        ax1.annotate(f'Best: {best_val_loss:.4f}',
-                     xy=(best_epoch, best_val_loss),
-                     xytext=(10, 10),
-                     textcoords='offset points',
-                     bbox=dict(boxstyle='round,pad=0.3', facecolor='yellow', alpha=0.7))
+        if val_losses:
+            best_val_loss = min(val_losses)
+            best_epoch = epochs[val_losses.index(best_val_loss)]
+            ax1.axvline(x=best_epoch, color='gray', linestyle='--', alpha=0.7)
+            ax1.annotate(f'Best: {best_val_loss:.4f} (Epoch {best_epoch})',
+                         xy=(best_epoch, best_val_loss),
+                         xytext=(10, 10),
+                         textcoords='offset points',
+                         bbox=dict(boxstyle='round,pad=0.3', facecolor='yellow', alpha=0.7))
 
-        ax1.set_title('Training and Validation Loss')
-        ax1.set_xlabel('Epoch')
+        # Add annotation for epoch 0 (initial state) if it exists
+        if epochs and epochs[0] == 0:
+            ax1.annotate('Initial\n(Epoch 0)',
+                         xy=(0, val_losses[0]),
+                         xytext=(-20, 20),
+                         textcoords='offset points',
+                         bbox=dict(boxstyle='round,pad=0.3', facecolor='lightblue', alpha=0.7),
+                         arrowprops=dict(arrowstyle='->', color='blue', alpha=0.7))
+
+        ax1.set_title('Training and Validation Loss (Including Initial State)')
+        ax1.set_xlabel('Epoch (0 = Initial State)')
         ax1.set_ylabel('Loss')
         ax1.legend()
         ax1.grid(True, alpha=0.3)
 
         # Plot 2: Learning rate
-        if self.learning_rates:
-            ax2.plot(epochs, self.learning_rates, 'g-', label='Learning Rate', marker='d', linewidth=2)
+        if learning_rates:
+            ax2.plot(epochs, learning_rates, 'g-', label='Learning Rate', marker='d', linewidth=2)
             ax2.set_title('Learning Rate Schedule')
             ax2.set_xlabel('Epoch')
             ax2.set_ylabel('Learning Rate')

@@ -1,0 +1,133 @@
+# RSICap Dataset Augmentation Configuration
+# 每个增强技术都可以通过 true/false 开关控制
+
+# =============================================================================
+# 全局设置
+# =============================================================================
+aug_prob: 0.8 # 应用增强的概率 (0.0-1.0)
+image_size: 512 # 输出图像尺寸 (保持原始大小)
+
+# =============================================================================
+# 空间变换 (Spatial Transforms)
+# 适合遥感图像，保持地理方位信息
+# =============================================================================
+enable_spatial: true # 总开关：是否启用空间变换
+
+# 随机裁剪 (模拟不同拍摄高度和视野)
+enable_crop: true # 开关：随机裁剪
+crop_scale: [0.8, 1.0] # 裁剪比例范围
+crop_ratio: [0.9, 1.1] # 宽高比范围
+
+# 仿射变换 (小范围平移，不旋转以保持方位)
+enable_affine: true # 开关：仿射变换
+translate_range: [0.1, 0.1] # 平移范围 (相对于图像尺寸)
+
+# =============================================================================
+# 颜色变换 (Color Transforms)
+# 模拟不同的光照和大气条件
+# =============================================================================
+enable_color: true # 总开关：是否启用颜色变换
+
+# 颜色抖动 (模拟不同光照条件)
+enable_color_jitter: true # 开关：颜色抖动
+brightness: 0.2 # 亮度变化范围
+contrast: 0.2 # 对比度变化范围
+saturation: 0.1 # 饱和度变化范围
+hue: 0.05 # 色调变化范围
+
+# 随机灰度 (模拟单波段图像)
+enable_grayscale: true # 开关：随机灰度
+grayscale_prob: 0.1 # 转为灰度的概率
+
+# 高斯模糊 (模拟大气散射和传感器模糊)
+enable_blur: true # 开关：高斯模糊
+blur_kernel: 3 # 模糊核大小
+blur_sigma: [0.1, 0.5] # 模糊强度范围
+
+# =============================================================================
+# 噪声变换 (Noise Transforms)
+# 模拟传感器噪声和传输干扰
+# =============================================================================
+enable_noise: false # 开关：噪声增强 (暂未实现)
+
+# =============================================================================
+# 预设配置示例
+# =============================================================================
+
+# 保守配置 (轻微增强，保持图像质量)
+conservative_config:
+  aug_prob: 0.6
+  image_size: 224
+  enable_spatial: true
+  enable_crop: true
+  crop_scale: [0.9, 1.0]
+  enable_affine: false
+  enable_color: true
+  enable_color_jitter: true
+  brightness: 0.1
+  contrast: 0.1
+  saturation: 0.05
+  hue: 0.02
+  enable_grayscale: false
+  enable_blur: false
+
+# 高分辨率配置 (保留更多细节信息)
+high_resolution_config:
+  aug_prob: 0.8
+  image_size: 384 # 更高分辨率
+  enable_spatial: true
+  enable_crop: true
+  crop_scale: [0.85, 1.0] # 稍微保守的裁剪
+  crop_ratio: [0.95, 1.05] # 更保守的宽高比
+  enable_affine: true
+  translate_range: [0.05, 0.05] # 更小的平移
+  enable_color: true
+  enable_color_jitter: true
+  brightness: 0.15
+  contrast: 0.15
+  saturation: 0.1
+  hue: 0.03
+  enable_grayscale: true
+  grayscale_prob: 0.05 # 降低灰度概率
+  enable_blur: false # 禁用模糊以保持清晰度
+
+# 激进配置 (强增强，最大化数据多样性)
+aggressive_config:
+  aug_prob: 0.9
+  enable_spatial: true
+  enable_crop: true
+  crop_scale: [0.7, 1.0]
+  crop_ratio: [0.8, 1.2]
+  enable_affine: true
+  translate_range: [0.15, 0.15]
+  enable_color: true
+  enable_color_jitter: true
+  brightness: 0.3
+  contrast: 0.3
+  saturation: 0.2
+  hue: 0.1
+  enable_grayscale: true
+  grayscale_prob: 0.15
+  enable_blur: true
+  blur_sigma: [0.1, 1.0]
+
+# 仅空间增强 (只改变空间，不改变颜色)
+spatial_only_config:
+  aug_prob: 0.8
+  enable_spatial: true
+  enable_crop: true
+  enable_affine: true
+  enable_color: false
+  enable_grayscale: false
+  enable_blur: false
+
+# 仅颜色增强 (只改变颜色，不改变空间)
+color_only_config:
+  aug_prob: 0.8
+  enable_spatial: false
+  enable_crop: false
+  enable_affine: false
+  enable_color: true
+  enable_color_jitter: true
+  enable_grayscale: true
+  enable_blur: true

@@ -80,11 +80,11 @@ def load_rsicap_data(config):
     Returns train_loader, val_loader, processor
     """
     
-    # Use default paths if not specified in config
+    # Use augmented dataset for training and test, original for eval
     if not hasattr(config, 'rsicap_captions_file') or not config.rsicap_captions_file:
-        config.rsicap_captions_file = "data/rsgpt_dataset/RSICap/captions.json"
+        config.rsicap_captions_file = "data/rsgpt_dataset/RSICap_augmented/captions.json"
     if not hasattr(config, 'rsicap_images_dir') or not config.rsicap_images_dir:
-        config.rsicap_images_dir = "data/rsgpt_dataset/RSICap/images"
+        config.rsicap_images_dir = "data/rsgpt_dataset/RSICap_augmented/images"
     
     print(f"Loading RSICap data from {config.rsicap_captions_file}")
     

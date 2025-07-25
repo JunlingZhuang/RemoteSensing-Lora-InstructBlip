@@ -21,7 +21,7 @@ max_grad_norm: 0.3
 
 # Scheduler (Group 1: Cosine)
 scheduler_type: "cosine"
-min_lr: 1e-6
+min_lr: 0.000001
 cosine_restarts: false
 
 # Early Stopping

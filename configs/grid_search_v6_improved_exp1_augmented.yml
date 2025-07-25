@@ -1,14 +1,15 @@
-# Grid V6 Experiment 1: Conservative Rank + High Alpha + Low Dropout + Cosine
+# Grid V6 Experiment 1 (Augmented): Conservative Rank + High Alpha + Low Dropout + Cosine
 # 实验组合: r=16, alpha=64, dropout=0.05, scheduler=cosine
+# 使用数据增强数据集 (7755 samples, 3.75x augmentation)
 
-name: "grid_v6_exp1_r16_a64_d05_cosine"
-description: "V6 Exp1: Conservative rank with high alpha, low dropout, cosine scheduler"
+name: "grid_v6_exp1_r16_a64_d05_cosine_augmented"
+description: "V6 Exp1 Augmented: Conservative rank with high alpha, low dropout, cosine scheduler on augmented dataset"
 
 # Training Parameters
 num_epochs: 15
 batch_size: 12
 learning_rate: 0.0001 # Conservative LR (Group A)
-max_samples: 2068
+max_samples: 7755 # Full augmented dataset
 
 # LoRA Parameters (Group 1: Conservative)
 lora_r: 16 # Conservative rank
@@ -33,3 +34,6 @@ min_delta: 0.001
 val_split: 0.2
 random_seed: 42
 torch_dtype: "float32"
+
+# Data Source (使用增强数据集)
+data_source: "augmented"

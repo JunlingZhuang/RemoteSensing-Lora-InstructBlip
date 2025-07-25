@@ -31,18 +31,28 @@ os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
 # ============================================================================
 # Define which config files to run (can be single or multiple)
 CONFIG_FILES = [
-    "configs/baseline_lora_instructblip.yml",
-    # Grid Search V6 Improved Experiments - Comprehensive Parameter Analysis
-    "configs/grid_search_v6_improved_exp1.yml",  # r=16, α=64, d=0.05, cosine, lr=1e-4
-    "configs/grid_search_v6_improved_exp2.yml",  # r=16, α=32, d=0.1, linear, lr=2e-4
-    "configs/grid_search_v6_improved_exp3.yml",  # r=24, α=64, d=0.1, linear, lr=1e-4
-    "configs/grid_search_v6_improved_exp4.yml",  # r=24, α=32, d=0.05, cosine, lr=2e-4
-    "configs/grid_search_v6_improved_exp5.yml",  # r=32, α=64, d=0.05, linear, lr=1e-4
-    "configs/grid_search_v6_improved_exp6.yml",  # r=32, α=32, d=0.1, cosine, lr=2e-4
-    "configs/grid_search_v6_improved_exp7.yml",  # r=16, α=48, d=0.1, cosine, lr=2e-4
-    "configs/grid_search_v6_improved_exp8.yml",  # r=32, α=48, d=0.05, linear, lr=1e-4
-    # "configs/high_lr_experiment.yml",  # Add more configs here
-    # "configs/large_batch_experiment.yml",
+    # Grid Search V6 Improved Experiments - Augmented Dataset (7755 samples, 3.75x data)
+    "configs/grid_search_v6_improved_exp1_augmented.yml",  # r=16, α=64, d=0.05, cosine, lr=1e-4
+    "configs/grid_search_v6_improved_exp2_augmented.yml",  # r=16, α=48, d=0.1, linear, lr=1e-4
+    "configs/grid_search_v6_improved_exp3_augmented.yml",  # r=24, α=64, d=0.1, linear, lr=1e-4
+    "configs/grid_search_v6_improved_exp4_augmented.yml",  # r=24, α=48, d=0.05, cosine, lr=1e-4
+    "configs/grid_search_v6_improved_exp5_augmented.yml",  # r=32, α=64, d=0.05, linear, lr=1e-4
+    "configs/grid_search_v6_improved_exp6_augmented.yml",  # r=32, α=32, d=0.1, cosine, lr=2e-4
+    "configs/grid_search_v6_improved_exp7_augmented.yml",  # r=16, α=48, d=0.1, cosine, lr=2e-4
+    "configs/grid_search_v6_improved_exp8_augmented.yml",  # r=32, α=48, d=0.05, linear, lr=1e-4
+
+    # Original experiments (commented out - use for comparison)
+    # "configs/grid_search_v6_improved_exp1.yml",  # r=16, α=64, d=0.05, cosine, lr=1e-4
+    # "configs/grid_search_v6_improved_exp2.yml",  # r=16, α=32, d=0.1, linear, lr=2e-4
+    # "configs/grid_search_v6_improved_exp3.yml",  # r=24, α=64, d=0.1, linear, lr=1e-4
+    # "configs/grid_search_v6_improved_exp4.yml",  # r=24, α=32, d=0.05, cosine, lr=2e-4
+    # "configs/grid_search_v6_improved_exp5.yml",  # r=32, α=64, d=0.05, linear, lr=1e-4
+    # "configs/grid_search_v6_improved_exp6.yml",  # r=32, α=32, d=0.1, cosine, lr=2e-4
+    # "configs/grid_search_v6_improved_exp7.yml",  # r=16, α=48, d=0.1, cosine, lr=2e-4
+    # "configs/grid_search_v6_improved_exp8.yml",  # r=32, α=48, d=0.05, linear, lr=1e-4
+
+    # Quick test for debugging
+    # "configs/quick_test.yml",
 ]
 
 # ============================================================================
@@ -148,6 +158,37 @@ def train_single_config(config_path):
     print("="*60)
 
     latest_checkpoint_path = None
+
+    # Record initial loss at epoch 0 (before training)
+    print("\n=== Epoch 0 (Initial State) ===")
+    initial_val_loss = trainer.validate(-1)  # Use -1 to indicate initial evaluation
+    print(f"📊 Initial loss: {initial_val_loss:.4f}")
+
+    # Save epoch 0 summary
+    epoch_0_summary = {
+        "epoch": 0,
+        "train_loss": initial_val_loss,  # Use validation loss as proxy for initial training loss
+        "val_loss": initial_val_loss,
+        "epoch_time": 0,
+        "learning_rate": config.learning_rate,
+        "timestamp": datetime.now().isoformat()
+    }
+
+    # Save epoch 0 file
+    epoch_file = os.path.join(config.save_dir, "epoch_0_summary.json")
+    with open(epoch_file, 'w', encoding='utf-8') as f:
+        json.dump(epoch_0_summary, f, ensure_ascii=False, indent=2)
+
+    # Initialize history with epoch 0
+    history = {"epochs": [epoch_0_summary]}
+    history["config"] = yaml_config
+    history["last_updated"] = datetime.now().isoformat()
+
+    history_file = os.path.join(config.save_dir, "training_history.json")
+    with open(history_file, 'w', encoding='utf-8') as f:
+        json.dump(history, f, ensure_ascii=False, indent=2)
+
+    print("📊 Epoch 0 (initial state) history saved")
 
     for epoch in range(config.num_epochs):
         print(f"\n--- Epoch {epoch + 1}/{config.num_epochs} ---")

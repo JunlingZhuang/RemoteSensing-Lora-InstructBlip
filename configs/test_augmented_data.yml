@@ -1,0 +1,34 @@
+# Test configuration for augmented RSICap dataset
+# Quick test to verify augmented data loading works correctly
+
+name: "test_augmented_data"
+description: "Test training with 3x augmented RSICap dataset"
+
+# Training Parameters (small scale for testing)
+num_epochs: 2
+batch_size: 4
+learning_rate: 0.00001
+max_samples: 100 # Small sample for quick test
+
+# LoRA Parameters (conservative for testing)
+lora_r: 8
+lora_alpha: 16
+lora_dropout: 0.1
+
+# Optimization Parameters
+warmup_steps: 10
+max_grad_norm: 0.5
+
+# Scheduler
+scheduler_type: "linear"
+start_factor: 0.1
+
+# Early Stopping (disabled for quick test)
+early_stopping_enabled: false
+
+# Data Parameters
+val_split: 0.2
+random_seed: 42
+
+# Model Parameters
+torch_dtype: "float32"

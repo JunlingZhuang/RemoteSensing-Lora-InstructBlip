@@ -1,14 +1,15 @@
-# Grid V6 Experiment 6: High Rank + Low Alpha + High Dropout + Cosine
+# Grid V6 Experiment 6 (Augmented): High Rank + Low Alpha + High Dropout + Cosine
 # 实验组合: r=32, alpha=32, dropout=0.1, scheduler=cosine
+# 使用数据增强数据集 (7755 samples, 3.75x augmentation)
 
-name: "grid_v6_exp6_r32_a32_d10_cosine"
-description: "V6 Exp6: High rank with low alpha, high dropout, cosine scheduler"
+name: "grid_v6_exp6_r32_a32_d10_cosine_augmented"
+description: "V6 Exp6 Augmented: High rank with low alpha, high dropout, cosine scheduler on augmented dataset"
 
 # Training Parameters
 num_epochs: 15
 batch_size: 8
 learning_rate: 0.0002 # Higher LR (Group B) - 测试高rank+高LR
-max_samples: 2068
+max_samples: 7755 # Full augmented dataset
 
 # LoRA Parameters (Group 3: High)
 lora_r: 32 # High rank
@@ -33,3 +34,6 @@ min_delta: 0.001
 val_split: 0.2
 random_seed: 42
 torch_dtype: "float32"
+
+# Data Source (使用增强数据集)
+data_source: "augmented"
