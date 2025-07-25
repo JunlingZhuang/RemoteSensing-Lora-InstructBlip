@@ -56,7 +56,7 @@ class LoRATrainer:
                 restore_best_weights=True,
                 verbose=True
             )
-            print(f"🛑 Early stopping enabled: patience={self.early_stopping.patience}, "
+            print(f"Early stopping enabled: patience={self.early_stopping.patience}, "
                   f"min_delta={self.early_stopping.min_delta}")
 
         # Create save directory
@@ -134,9 +134,9 @@ class LoRATrainer:
         current_lr = self.optimizer.param_groups[0]['lr']
         self.learning_rates.append(current_lr)
 
-        print(f"✅ Epoch {epoch + 1} completed in {epoch_time:.2f}s")
-        print(f"📊 Average training loss: {avg_train_loss:.4f}")
-        print(f"🔢 Processed {num_batches}/{len(self.train_loader)} valid batches")
+        print(f"Epoch {epoch + 1} completed in {epoch_time:.2f}s")
+        print(f"Average training loss: {avg_train_loss:.4f}")
+        print(f"Processed {num_batches}/{len(self.train_loader)} valid batches")
 
         return avg_train_loss, epoch_time
     
@@ -229,8 +229,8 @@ class LoRATrainer:
             }
             self.epoch_details.append(epoch_info)
 
-        print(f"📈 Validation loss: {avg_val_loss:.4f}")
-        print(f"🔢 Processed {num_batches}/{len(self.val_loader)} valid validation batches")
+        print(f"Validation loss: {avg_val_loss:.4f}")
+        print(f"Processed {num_batches}/{len(self.val_loader)} valid validation batches")
 
         return avg_val_loss
     
@@ -245,7 +245,7 @@ class LoRATrainer:
         # Record initial loss at epoch 0 (before training)
         print("\n=== Epoch 0 (Initial State) ===")
         initial_val_loss = self.validate(0, is_initial=True)  # Use epoch 0 with special flag
-        print(f"📊 Initial loss: {initial_val_loss:.4f}")
+        print(f"Initial loss: {initial_val_loss:.4f}")
 
         for epoch in range(self.config.num_epochs):
             # Train
@@ -270,7 +270,7 @@ class LoRATrainer:
             if self.early_stopping is not None:
                 should_stop = self.early_stopping(val_loss, self.model.model, epoch + 1)
                 if should_stop:
-                    print(f"🛑 Early stopping triggered at epoch {epoch + 1}")
+                    print(f"Early stopping triggered at epoch {epoch + 1}")
                     # Restore best model weights
                     self.early_stopping.restore_best_model(self.model.model)
                     break
@@ -394,7 +394,7 @@ class LoRATrainer:
         # Save plot
         plot_path = os.path.join(self.config.save_dir, 'training_curves.png')
         plt.savefig(plot_path, dpi=300, bbox_inches='tight')
-        print(f"📈 Training curves saved to {plot_path}")
+        print(f"Training curves saved to {plot_path}")
 
         plt.close()  # Don't show, just save
 
@@ -445,7 +445,7 @@ class LoRATrainer:
         with open(summary_path, 'w') as f:
             json.dump(summary, f, indent=2)
 
-        print(f"📊 Detailed training summary saved to {summary_path}")
+        print(f"Detailed training summary saved to {summary_path}")
 
         # Generate plots
         self.plot_losses()

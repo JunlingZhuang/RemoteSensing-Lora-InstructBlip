@@ -89,64 +89,64 @@ def fix_lora_adapter_config(checkpoint_path):
                 removed_params.append(param)
                 del config[param]
 
-        # 如果有参数被移除，保存修复后的配置
+        # If parameters were removed, save the fixed configuration
         if removed_params:
-            print(f"🔧 Fixing adapter_config.json...")
+            print(f"Fixing adapter_config.json...")
             print(f"   Removing invalid parameters: {', '.join(removed_params)}")
 
-            # 备份原文件
+            # Backup original file
             backup_path = adapter_config_path + ".backup"
             if not os.path.exists(backup_path):
                 import shutil
                 shutil.copy2(adapter_config_path, backup_path)
                 print(f"   Backup saved to: {backup_path}")
 
-            # 保存修复后的配置
+            # Save fixed configuration
             with open(adapter_config_path, 'w', encoding='utf-8') as f:
                 json.dump(config, f, indent=2, ensure_ascii=False)
 
-            print(f"✅ adapter_config.json fixed successfully!")
+            print(f"adapter_config.json fixed successfully!")
             return True
         else:
-            print(f"✅ adapter_config.json is already compatible")
+            print(f"adapter_config.json is already compatible")
             return False
 
     except Exception as e:
-        print(f"❌ Error fixing adapter_config.json: {e}")
+        print(f"Error fixing adapter_config.json: {e}")
         return False
 
 
 def fix_all_lora_configs_in_directory(checkpoint_dir):
     """
-    修复目录中所有可能的 LoRA 配置文件
+    Fix all possible LoRA configuration files in directory
 
     Args:
-        checkpoint_dir: checkpoint 目录路径
+        checkpoint_dir: checkpoint directory path
     """
-    print(f"🔍 Scanning for LoRA configs in: {checkpoint_dir}")
+    print(f"Scanning for LoRA configs in: {checkpoint_dir}")
 
     if not os.path.exists(checkpoint_dir):
-        print(f"❌ Checkpoint directory not found: {checkpoint_dir}")
+        print(f"Checkpoint directory not found: {checkpoint_dir}")
         return
 
     fixed_count = 0
 
-    # 遍历目录中的所有子目录和文件
+    # Traverse all subdirectories and files in the directory
     for root, dirs, files in os.walk(checkpoint_dir):
         for file in files:
             if file == "adapter_config.json":
                 config_path = os.path.join(root, file)
                 print(f"   Found adapter_config.json: {config_path}")
 
-                # 修复这个配置文件
+                # Fix this configuration file
                 parent_dir = os.path.dirname(config_path)
                 if fix_lora_adapter_config(parent_dir):
                     fixed_count += 1
 
     if fixed_count > 0:
-        print(f"✅ Fixed {fixed_count} LoRA configuration file(s)")
+        print(f"Fixed {fixed_count} LoRA configuration file(s)")
     else:
-        print(f"✅ All LoRA configurations are compatible")
+        print(f"All LoRA configurations are compatible")
 
 
 def evaluate_model_vqa_on_rsieval(rsieval_path, model_type="instructblip", lora_checkpoint=None, output_path=None, max_samples=None):
@@ -178,14 +178,14 @@ def evaluate_model_vqa_on_rsieval(rsieval_path, model_type="instructblip", lora_
         if not lora_checkpoint:
             raise ValueError("LoRA checkpoint path required for model_type='lora'")
 
-        # 统一修复 LoRA 配置文件
-        print(f"🔍 Checking LoRA checkpoint: {lora_checkpoint}")
+        # Uniformly fix LoRA configuration files
+        print(f"Checking LoRA checkpoint: {lora_checkpoint}")
 
-        # 如果是单个 checkpoint，直接修复
+        # If it's a single checkpoint, fix directly
         if os.path.isdir(lora_checkpoint):
             fix_lora_adapter_config(lora_checkpoint)
         else:
-            # 如果是 checkpoint 目录的父目录，扫描所有子目录
+            # If it's the parent directory of checkpoint directory, scan all subdirectories
             checkpoint_parent = os.path.dirname(lora_checkpoint)
             if os.path.exists(checkpoint_parent):
                 fix_all_lora_configs_in_directory(checkpoint_parent)
@@ -271,13 +271,13 @@ def evaluate_model_vqa_on_rsieval(rsieval_path, model_type="instructblip", lora_
                 print("-" * 40)
         
         except Exception as e:
-            print(f"❌ Error processing sample {i} ({sample['filename']}): {e}")
+            print(f"Error processing sample {i} ({sample['filename']}): {e}")
             print(f"   Question: {sample['question']}")
 
             # Save partial results if we've processed a significant number
             if len(results) >= 50 and (i + 1) % 100 == 0:
                 partial_output_path = output_path.replace('.json', f'_partial_{i+1}.json') if output_path else f"partial_results_{i+1}.json"
-                print(f"💾 Saving partial results to {partial_output_path}")
+                print(f"Saving partial results to {partial_output_path}")
 
                 partial_data = {
                     "model_type": model_name,

@@ -1,26 +1,26 @@
 # RSICap Dataset Augmentation Configuration
-# 每个增强技术都可以通过 true/false 开关控制
+# Each augmentation technique can be controlled via true/false switches
 
 # =============================================================================
-# 全局设置
+# Global Settings
 # =============================================================================
-aug_prob: 0.8 # 应用增强的概率 (0.0-1.0)
-image_size: 512 # 输出图像尺寸 (保持原始大小)
+aug_prob: 0.8 # Probability of applying augmentation (0.0-1.0)
+image_size: 512 # Output image size (maintain original size)
 
 # =============================================================================
-# 空间变换 (Spatial Transforms)
-# 适合遥感图像，保持地理方位信息
+# Spatial Transforms
+# Suitable for remote sensing images, preserving geographic orientation
 # =============================================================================
-enable_spatial: true # 总开关：是否启用空间变换
+enable_spatial: true # Master switch: whether to enable spatial transforms
 
-# 随机裁剪 (模拟不同拍摄高度和视野)
-enable_crop: true # 开关：随机裁剪
-crop_scale: [0.8, 1.0] # 裁剪比例范围
-crop_ratio: [0.9, 1.1] # 宽高比范围
+# Random crop (simulate different shooting heights and field of view)
+enable_crop: true # Switch: random crop
+crop_scale: [0.8, 1.0] # Crop scale range
+crop_ratio: [0.9, 1.1] # Aspect ratio range
 
-# 仿射变换 (小范围平移，不旋转以保持方位)
-enable_affine: true # 开关：仿射变换
-translate_range: [0.1, 0.1] # 平移范围 (相对于图像尺寸)
+# Affine transform (small range translation, no rotation to preserve orientation)
+enable_affine: true # Switch: affine transform
+translate_range: [0.1, 0.1] # Translation range (relative to image size)
 
 # =============================================================================
 # 颜色变换 (Color Transforms)

@@ -16,9 +16,9 @@ class Config:
         self.lora_r = 8   # Lower rank for stability
         self.lora_alpha = 16  # Proportional scaling
         self.lora_dropout = 0.1
-        # 只微调 Q-Former，不微调 Language Model (简化版本)
+        # Only fine-tune Q-Former, not Language Model (simplified version)
         self.target_modules = ["query", "key", "value", "dense"]
-        # 注意：需要在 LoRA 应用时指定只应用到 qformer 模块
+        # Note: Need to specify applying only to qformer module when applying LoRA
         
         # Training settings (ultra-conservative for MVP success)
         self.learning_rate = 1e-6  # Ultra-low to prevent Q-Former LoRA instability
@@ -35,9 +35,9 @@ class Config:
         self.cosine_restarts = False  # Whether to use cosine annealing with restarts
 
         # Early Stopping settings
-        self.early_stopping_patience = 3  # 验证loss不改善3个epoch就停止
-        self.min_delta = 0.001  # 最小改善阈值
-        self.early_stopping_enabled = False  # 默认关闭，可在配置文件中启用
+        self.early_stopping_patience = 3  # Stop if validation loss doesn't improve for 3 epochs
+        self.min_delta = 0.001  # Minimum improvement threshold
+        self.early_stopping_enabled = False  # Disabled by default, can be enabled in config file
         
         # Data settings (80/20 split from plan)
         self.train_split = 0.8

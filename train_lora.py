@@ -66,9 +66,9 @@ def load_yaml_config(config_path):
     with open(config_path, 'r', encoding='utf-8') as f:
         yaml_config = yaml.safe_load(f)
 
-    print(f"📋 Loaded config: {yaml_config.get('name', 'unnamed')}")
+    print(f"Loaded config: {yaml_config.get('name', 'unnamed')}")
     if 'description' in yaml_config:
-        print(f"📝 Description: {yaml_config['description']}")
+        print(f"Description: {yaml_config['description']}")
 
     return yaml_config
 
@@ -79,8 +79,8 @@ def train_single_config(config_path):
     yaml_config = load_yaml_config(config_path)
 
     print("="*60)
-    print("🚀 LoRA Training - InstructBLIP on RSICap")
-    print(f"📋 Config: {yaml_config.get('name', 'unnamed')}")
+    print("LoRA Training - InstructBLIP on RSICap")
+    print(f"Config: {yaml_config.get('name', 'unnamed')}")
     print("="*60)
 
     # Create config object
@@ -100,8 +100,8 @@ def train_single_config(config_path):
     
     # 数据路径已在 config.py 中正确设置
 
-    # 显示配置
-    print(f"📋 Training Configuration:")
+    # Display configuration
+    print(f"Training Configuration:")
     print(f"  LoRA rank (r): {config.lora_r}")
     print(f"  LoRA alpha: {config.lora_alpha}")
     print(f"  Learning rate: {config.learning_rate}")
@@ -111,18 +111,18 @@ def train_single_config(config_path):
     print(f"  Save dir: {config.save_dir}")
     print()
 
-    # 加载组件
+    # Load components
     print("Loading LoRA model...")
     model = LoRAInstructBLIP(config)
-    print("✅ Model loaded successfully!")
+    print("Model loaded successfully!")
 
     print("Loading dataset...")
     train_loader, val_loader, processor = load_rsicap_data(config)
-    print("✅ Dataset loaded successfully!")
+    print("Dataset loaded successfully!")
 
-    # 限制数据量
+    # Limit data amount
     if config.max_samples:
-        print(f"🔢 Limiting training to {config.max_samples} samples")
+        print(f"Limiting training to {config.max_samples} samples")
         limited_train_data = list(train_loader.dataset.data)[:config.max_samples]
         limited_train_dataset = RSICapDataset(
             limited_train_data,
@@ -138,9 +138,9 @@ def train_single_config(config_path):
             pin_memory=True,
             collate_fn=collate_fn
         )
-        print(f"✅ Limited to {len(train_loader)} batches per epoch")
+        print(f"Limited to {len(train_loader)} batches per epoch")
 
-    # 创建训练器
+    # Create trainer
     print("Creating trainer...")
     trainer = LoRATrainer(
         model=model,
@@ -148,13 +148,13 @@ def train_single_config(config_path):
         val_loader=val_loader,
         config=config
     )
-    print("✅ Trainer created successfully!")
+    print("Trainer created successfully!")
 
     # 验证 LoRA 配置
     model.verify_lora_training()
 
-    # 开始训练
-    print("\n🚀 Starting LoRA training...")
+    # Start training
+    print("\nStarting LoRA training...")
     print("="*60)
 
     latest_checkpoint_path = None
@@ -162,7 +162,7 @@ def train_single_config(config_path):
     # Record initial loss at epoch 0 (before training)
     print("\n=== Epoch 0 (Initial State) ===")
     initial_val_loss = trainer.validate(-1)  # Use -1 to indicate initial evaluation
-    print(f"📊 Initial loss: {initial_val_loss:.4f}")
+    print(f"Initial loss: {initial_val_loss:.4f}")
 
     # Save epoch 0 summary
     epoch_0_summary = {
@@ -188,7 +188,7 @@ def train_single_config(config_path):
     with open(history_file, 'w', encoding='utf-8') as f:
         json.dump(history, f, ensure_ascii=False, indent=2)
 
-    print("📊 Epoch 0 (initial state) history saved")
+    print("Epoch 0 (initial state) history saved")
 
     for epoch in range(config.num_epochs):
         print(f"\n--- Epoch {epoch + 1}/{config.num_epochs} ---")
@@ -231,28 +231,28 @@ def train_single_config(config_path):
         with open(history_file, 'w', encoding='utf-8') as f:
             json.dump(history, f, ensure_ascii=False, indent=2)
 
-        print(f"📊 Epoch {epoch + 1} history saved")
+        print(f"Epoch {epoch + 1} history saved")
 
-        # 保存检查点
+        # Save checkpoint
         if (epoch + 1) % 2 == 0 or epoch == config.num_epochs - 1:
             latest_checkpoint_path = os.path.join(config.save_dir, f"checkpoint_epoch_{epoch+1}.pth")
             trainer.save_checkpoint(latest_checkpoint_path, epoch, train_loss, val_loss)
-            print(f"💾 Checkpoint saved: {latest_checkpoint_path}")
+            print(f"Checkpoint saved: {latest_checkpoint_path}")
 
-    # 保存训练总结和生成可视化
+    # Save training summary and generate visualizations
     print("\n" + "="*60)
-    print("🎉 Training Completed!")
+    print("Training Completed!")
     print("="*60)
 
-    # 调用trainer的详细保存功能（包含可视化）
+    # Call trainer's detailed save function (including visualizations)
     if hasattr(trainer, 'save_training_summary'):
         detailed_summary_path = trainer.save_training_summary()
-        print(f"📊 Detailed training summary with plots saved: {detailed_summary_path}")
+        print(f"Detailed training summary with plots saved: {detailed_summary_path}")
     else:
-        # 如果trainer没有这个方法，调用plot_losses
+        # If trainer doesn't have this method, call plot_losses
         if hasattr(trainer, 'plot_losses'):
             trainer.plot_losses()
-            print(f"📈 Training curves saved to: {config.save_dir}/training_curves.png")
+            print(f"Training curves saved to: {config.save_dir}/training_curves.png")
 
     # 保存基本总结
     summary = {
@@ -272,23 +272,23 @@ def train_single_config(config_path):
     with open(summary_path, 'w', encoding='utf-8') as f:
         json.dump(summary, f, ensure_ascii=False, indent=2)
 
-    print(f"📄 Basic training summary saved: {summary_path}")
-    print(f"💾 Latest checkpoint: {latest_checkpoint_path}")
-    print(f"📁 All files saved to: {config.save_dir}")
-    print("\n✅ All done!")
+    print(f"Basic training summary saved: {summary_path}")
+    print(f"Latest checkpoint: {latest_checkpoint_path}")
+    print(f"All files saved to: {config.save_dir}")
+    print("\nAll done!")
     return latest_checkpoint_path
 
 def main():
     """Main function to run training with multiple configurations"""
 
-    print("🚀 Starting LoRA Training Pipeline")
-    print(f"📁 Found {len(CONFIG_FILES)} configuration(s) to run")
+    print("Starting LoRA Training Pipeline")
+    print(f"Found {len(CONFIG_FILES)} configuration(s) to run")
     print("="*60)
 
     results = []
 
     for i, config_path in enumerate(CONFIG_FILES, 1):
-        print(f"\n🔄 Running configuration {i}/{len(CONFIG_FILES)}: {config_path}")
+        print(f"\nRunning configuration {i}/{len(CONFIG_FILES)}: {config_path}")
 
         try:
             checkpoint_path = train_single_config(config_path)
@@ -297,10 +297,10 @@ def main():
                 "status": "success",
                 "checkpoint": checkpoint_path
             })
-            print(f"✅ Configuration {i} completed successfully!")
+            print(f"Configuration {i} completed successfully!")
 
         except Exception as e:
-            print(f"❌ Configuration {i} failed: {e}")
+            print(f"Configuration {i} failed: {e}")
             results.append({
                 "config_path": config_path,
                 "status": "failed",
@@ -309,23 +309,23 @@ def main():
 
     # Print final summary
     print("\n" + "="*60)
-    print("🎉 Training Pipeline Completed!")
+    print("Training Pipeline Completed!")
     print("="*60)
 
     successful = [r for r in results if r["status"] == "success"]
     failed = [r for r in results if r["status"] == "failed"]
 
-    print(f"✅ Successful: {len(successful)}")
-    print(f"❌ Failed: {len(failed)}")
+    print(f"Successful: {len(successful)}")
+    print(f"Failed: {len(failed)}")
 
     if successful:
-        print("\n📊 Successful Runs:")
+        print("\nSuccessful Runs:")
         for result in successful:
             config_name = os.path.basename(result["config_path"])
             print(f"  - {config_name} → {result['checkpoint']}")
 
     if failed:
-        print("\n💥 Failed Runs:")
+        print("\nFailed Runs:")
         for result in failed:
             config_name = os.path.basename(result["config_path"])
             print(f"  - {config_name}: {result['error']}")

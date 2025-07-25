@@ -314,23 +314,23 @@ def augment_rsicap_dataset(data_dir, output_dir, config, num_augmentations=1):
         config: Augmentation configuration
         num_augmentations: Number of augmented versions per image
     """
-    print(f"🚀 Starting RSICap dataset augmentation...")
-    print(f"📁 Input: {data_dir}")
-    print(f"📁 Output: {output_dir}")
-    
+    print(f"Starting RSICap dataset augmentation...")
+    print(f"Input: {data_dir}")
+    print(f"Output: {output_dir}")
+
     # Create output directory
     os.makedirs(output_dir, exist_ok=True)
-    
+
     # Load annotations
     annotations = load_rsicap_annotations(data_dir)
-    print(f"📊 Found {len(annotations)} image annotations")
-    
+    print(f"Found {len(annotations)} image annotations")
+
     # Initialize augmentation
     augmenter = RSICapAugmentation(config)
     theoretical_factor = augmenter.get_augmentation_factor()
-    
-    print(f"🔢 Theoretical augmentation factor: {theoretical_factor:.1f}x")
-    print(f"🔢 Requested augmentations per image: {num_augmentations}")
+
+    print(f"Theoretical augmentation factor: {theoretical_factor:.1f}x")
+    print(f"Requested augmentations per image: {num_augmentations}")
     
     # Process images
     images_dir = os.path.join(data_dir, 'images')
@@ -403,12 +403,12 @@ def augment_rsicap_dataset(data_dir, output_dir, config, num_augmentations=1):
     with open(config_path, 'w') as f:
         yaml.dump(config, f, default_flow_style=False)
     
-    print(f"\n✅ Augmentation completed!")
-    print(f"📊 Original images: {len(annotations)}")
-    print(f"📊 Generated augmented images: {total_generated}")
-    print(f"📊 Total images: {len(augmented_annotations)}")
-    print(f"📊 Actual augmentation factor: {len(augmented_annotations)/len(annotations):.1f}x")
-    print(f"📁 Augmented dataset saved to: {output_dir}")
+    print(f"\nAugmentation completed!")
+    print(f"Original images: {len(annotations)}")
+    print(f"Generated augmented images: {total_generated}")
+    print(f"Total images: {len(augmented_annotations)}")
+    print(f"Actual augmentation factor: {len(augmented_annotations)/len(annotations):.1f}x")
+    print(f"Augmented dataset saved to: {output_dir}")
 
 
 def create_default_config():
@@ -458,21 +458,21 @@ if __name__ == "__main__":
     if args.config and os.path.exists(args.config):
         with open(args.config, 'r') as f:
             config = yaml.safe_load(f)
-        print(f"📋 Loaded config from: {args.config}")
+        print(f"Loaded config from: {args.config}")
     else:
         config = create_default_config()
-        print("📋 Using default configuration")
-    
+        print("Using default configuration")
+
     if args.preview:
         # Preview mode
         augmenter = RSICapAugmentation(config)
         factor = augmenter.get_augmentation_factor()
-        
-        print(f"\n🔍 Augmentation Preview:")
+
+        print(f"\nAugmentation Preview:")
         print(f"   Theoretical factor: {factor:.1f}x")
         print(f"   Requested augmentations: {args.num_aug}")
         print(f"   Expected total factor: {(1 + args.num_aug):.1f}x")
-        print(f"\n📋 Configuration:")
+        print(f"\nConfiguration:")
         for key, value in config.items():
             print(f"   {key}: {value}")
     else:
