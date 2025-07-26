@@ -1,72 +1,73 @@
-# 推理使用指南 / Inference Guide
+# Inference Guide
 
-## 概述
+## Overview
 
-本推理模块支持三种模型类型的推理：
-- **Native InstructBLIP**: 原生的InstructBLIP模型
-- **Native BLIP-2**: 原生的BLIP-2模型  
-- **LoRA Fine-tuned**: LoRA微调后的InstructBLIP模型
+This inference module supports three types of model inference:
 
-## 🚀 快速开始
+- **Native InstructBLIP**: Original InstructBLIP model
+- **Native BLIP-2**: Original BLIP-2 model
+- **LoRA Fine-tuned**: LoRA fine-tuned InstructBLIP model
 
-### 1. 单张图片推理
+## Quick Start
+
+### 1. Single Image Inference
 
 ```bash
-# 使用原生InstructBLIP
+# Use native InstructBLIP
 python inference_demo.py -i image.jpg
 
-# 使用LoRA微调模型
+# Use LoRA fine-tuned model
 python inference_demo.py -i image.jpg --model lora --lora-path ./saved_models/best_model
 
-# 使用BLIP-2
+# Use BLIP-2
 python inference_demo.py -i image.jpg --model blip2
 ```
 
-### 2. 批量图片推理
+### 2. Batch Image Inference
 
 ```bash
-# 批量处理文件夹中的所有图片
+# Batch process all images in folder
 python inference_demo.py --batch ./test_images --model lora --lora-path ./saved_models/best_model -o results.json
 ```
 
-### 3. 模型对比
+### 3. Model Comparison
 
 ```bash
-# 对比所有可用模型
+# Compare all available models
 python inference_demo.py -i image.jpg --model all --lora-path ./saved_models/best_model --compare -o comparison.json
 ```
 
-## 🔧 高级用法
+## Advanced Usage
 
-### 自定义参数 (使用debug notebook中的成功配置)
+### Custom Parameters (using successful configurations from debug notebook)
 
 ```bash
-# 自定义生成参数 (默认来自成功的debug_instructblip.ipynb配置)
+# Custom generation parameters (defaults from successful debug_instructblip.ipynb configuration)
 python inference_demo.py -i image.jpg \
     --max-tokens 300 \
     --num-beams 1 \
     --temperature 1.0 \
     --top-p 0.9 \
     --repetition-penalty 1.0 \
-    --instruction "详细描述这张遥感图像中的地物特征"
+    --instruction "Describe the land features in this remote sensing image in detail"
 ```
 
-### Python API 使用
+### Python API Usage
 
 ```python
 from module.inference.inferencer import ModelInferencer, quick_inference
 
-# 1. 快速推理 (使用默认的成功配置)
+# 1. Quick inference (using default successful configuration)
 caption = quick_inference("image.jpg", model_type="instructblip")
 print(caption)
 
-# 2. 详细推理 - 自定义生成参数
+# 2. Detailed inference - custom generation parameters
 inferencer = ModelInferencer(model_type="lora", model_path="./saved_models/best_model")
 
-# 使用debug notebook中成功的配置
+# Use successful configuration from debug notebook
 caption = inferencer.generate_caption(
-    "image.jpg", 
-    "描述这张图像",
+    "image.jpg",
+    "Describe this image",
     max_new_tokens=300,
     num_beams=1,
     do_sample=True,
@@ -75,62 +76,65 @@ caption = inferencer.generate_caption(
     temperature=1.0
 )
 
-# 3. 更新默认生成配置
+# 3. Update default generation configuration
 inferencer.update_generation_config(
     max_new_tokens=200,
     temperature=0.8
 )
 
-# 4. 批量推理
+# 4. Batch inference
 results = inferencer.batch_inference(["img1.jpg", "img2.jpg"])
 
-# 5. 模型对比
+# 5. Model comparison
 native_inferencer = ModelInferencer(model_type="instructblip")
 lora_inferencer = ModelInferencer(model_type="lora", model_path="./saved_models/best_model")
 comparison = native_inferencer.compare_models("image.jpg", lora_inferencer)
 ```
 
-## 📊 模型对比示例
+## Model Comparison Example
 
-运行模型对比后，你会看到类似输出：
+After running model comparison, you will see output similar to:
 
 ```
-🖼️ Image: remote_sensing_image.jpg
-📝 Instruction: Describe this remote sensing image in detail.
+Image: remote_sensing_image.jpg
+Instruction: Describe this remote sensing image in detail.
 
-🤖 INSTRUCTBLIP:
+INSTRUCTBLIP:
    This image shows an aerial view of a residential area with buildings and roads.
 
-🤖 BLIP2:
+BLIP2:
    a photo of buildings and roads from above
 
-🤖 LORA:
-   This remote sensing image captures a dense residential area with approximately 
-   25 houses arranged in a grid pattern. The houses have red and brown rooftops, 
+LORA:
+   This remote sensing image captures a dense residential area with approximately
+   25 houses arranged in a grid pattern. The houses have red and brown rooftops,
    surrounded by green vegetation. A main road runs through the center from north to south.
 ```
 
-## 🔄 模型加载方式差异
+## Model Loading Method Differences
 
-### LoRA模型加载 (两步加载)
-1. 首先加载base model (InstructBLIP)
-2. 然后加载LoRA权重并合并
+### LoRA Model Loading (Two-step loading)
+
+1. First load base model (InstructBLIP)
+2. Then load LoRA weights and merge
 
 ```python
-# 内部实现
+# Internal implementation
 base_model = InstructBlipForConditionalGeneration.from_pretrained("Salesforce/instructblip-flan-t5-xl")
 model = PeftModel.from_pretrained(base_model, lora_path)
 ```
 
-### 原生模型加载 (直接加载)
+### Native Model Loading (Direct loading)
+
 ```python
-# 直接加载
+# Direct loading
 model = InstructBlipForConditionalGeneration.from_pretrained("Salesforce/instructblip-flan-t5-xl")
 ```
 
-## 📝 输出格式
+## Output Format
 
-### 单张推理输出
+### Single Image Inference Output
+
 ```json
 {
   "image_path": "image.jpg",
@@ -144,11 +148,12 @@ model = InstructBlipForConditionalGeneration.from_pretrained("Salesforce/instruc
 }
 ```
 
-### 批量推理输出
+### Batch Inference Output
+
 ```json
 {
   "batch_directory": "./test_images",
-  "model_type": "lora", 
+  "model_type": "lora",
   "total_images": 10,
   "successful": 9,
   "results": [
@@ -158,7 +163,7 @@ model = InstructBlipForConditionalGeneration.from_pretrained("Salesforce/instruc
       "success": true
     },
     {
-      "image_path": "img2.jpg", 
+      "image_path": "img2.jpg",
       "error": "File not found",
       "success": false
     }
@@ -166,7 +171,8 @@ model = InstructBlipForConditionalGeneration.from_pretrained("Salesforce/instruc
 }
 ```
 
-### 模型对比输出
+### Model Comparison Output
+
 ```json
 {
   "image_path": "image.jpg",
@@ -179,97 +185,99 @@ model = InstructBlipForConditionalGeneration.from_pretrained("Salesforce/instruc
 }
 ```
 
-## ⚙️ 配置参数
+## Configuration Parameters
 
-**重要变更**: Generation settings现在从Config中分离，推理时可以灵活调整
+**Important Change**: Generation settings are now separated from Config, allowing flexible adjustment during inference
 
-### 默认生成参数 (来自成功的debug_instructblip.ipynb)
+### Default Generation Parameters (from successful debug_instructblip.ipynb)
 
 ```python
-# 这些是内置的默认值，基于你notebook中成功的配置
+# These are built-in defaults based on successful configurations from your notebook
 generation_config = {
-    "max_new_tokens": 300,        # 最大生成token数
-    "num_beams": 1,               # beam search数量 
-    "do_sample": True,            # 是否采样
-    "top_p": 0.9,                 # top-p采样
-    "temperature": 1.0,           # 生成温度
-    "repetition_penalty": 1.0     # 重复惩罚
+    "max_new_tokens": 300,        # Maximum number of tokens to generate
+    "num_beams": 1,               # Number of beams for beam search
+    "do_sample": True,            # Whether to use sampling
+    "top_p": 0.9,                 # Top-p sampling
+    "temperature": 1.0,           # Generation temperature
+    "repetition_penalty": 1.0     # Repetition penalty
 }
 ```
 
-### 推理时自定义参数
+### Custom Parameters During Inference
 
 ```python
-# 方法1: 在generate_caption时传递参数
+# Method 1: Pass parameters in generate_caption
 caption = inferencer.generate_caption(
-    "image.jpg", 
-    instruction="描述图像",
-    max_new_tokens=200,           # 覆盖默认值
-    temperature=0.8               # 覆盖默认值
+    "image.jpg",
+    instruction="Describe the image",
+    max_new_tokens=200,           # Override default value
+    temperature=0.8               # Override default value
 )
 
-# 方法2: 更新默认配置
+# Method 2: Update default configuration
 inferencer.update_generation_config(
     max_new_tokens=200,
     temperature=0.8
 )
 ```
 
-### Config类现在只包含
+### Config Class Now Only Contains
 
-- 模型设置 (model_name, device等)
-- LoRA设置 (lora_r, lora_alpha等) 
-- 训练设置 (learning_rate, batch_size等)
-- 数据设置 (数据路径, split等)
+- Model settings (model_name, device, etc.)
+- LoRA settings (lora_r, lora_alpha, etc.)
+- Training settings (learning_rate, batch_size, etc.)
+- Data settings (data paths, split, etc.)
 
-## 🧪 测试推理功能
+## Testing Inference Functionality
 
 ```bash
-# 运行推理模块测试
+# Run inference module tests
 python module/tests/test_inference.py
 
-# 或使用测试运行器
+# Or use test runner
 python module/tests/run_tests.py --pattern inference
 ```
 
-## 🔍 故障排除
+## Troubleshooting
 
-### 常见问题
+### Common Issues
 
-1. **LoRA模型加载失败**
-   - 检查模型路径是否正确
-   - 确保LoRA权重文件存在
+1. **LoRA Model Loading Failed**
 
-2. **显存不足**
-   - 减少batch_size
-   - 使用CPU推理：设置device="cpu"
+   - Check if model path is correct
+   - Ensure LoRA weight files exist
 
-3. **模型下载失败**
-   - 检查网络连接
-   - 使用镜像源或本地模型
+2. **Out of Memory**
 
-### 调试模式
+   - Reduce batch_size
+   - Use CPU inference: set device="cpu"
+
+3. **Model Download Failed**
+   - Check network connection
+   - Use mirror sources or local models
+
+### Debug Mode
 
 ```python
-# 启用详细日志
+# Enable verbose logging
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-# 检查GPU内存
+# Check GPU memory
 from module.utils import print_gpu_summary
 print_gpu_summary()
 ```
 
-## 📈 性能优化
+## Performance Optimization
 
-1. **使用GPU加速**: 确保CUDA可用
-2. **批量处理**: 对多张图片使用batch_inference
-3. **模型缓存**: 避免重复加载同一模型
-4. **精度优化**: 使用float16精度节省显存
+1. **Use GPU Acceleration**: Ensure CUDA is available
+2. **Batch Processing**: Use batch_inference for multiple images
+3. **Model Caching**: Avoid repeatedly loading the same model
+4. **Precision Optimization**: Use float16 precision to save memory
 
-## 🎯 应用场景
+## Application Scenarios
 
-- **遥感图像分析**: 自动生成遥感图像描述
-- **模型评估**: 对比不同模型的性能
-- **数据标注**: 批量生成图像标注
-- **研究实验**: 评估微调效果
+- **Remote Sensing Image Analysis**: Automatically generate remote sensing image descriptions
+- **Model Evaluation**: Compare performance of different models
+- **Data Annotation**: Batch generate image annotations
+- **Research Experiments**: Evaluate fine-tuning effects

@@ -34,11 +34,11 @@ class RSICapDataset(Dataset):
             print(f"Error loading image {image_path}: {e}")
             image = Image.new('RGB', (224, 224), color='black')
         
-        # RSICap格式：使用caption作为目标文本，text_input作为指令
+        # RSICap format: use caption as target text, text_input as instruction
         instruction = item.get('text_input', 'Describe this remote sensing image.')
         target_text = item.get('caption', item.get('text_output', ''))
 
-        # 如果没有text_input，使用默认指令
+        # If no text_input, use default instruction
         if not instruction:
             instruction = 'Describe this remote sensing image.'
         

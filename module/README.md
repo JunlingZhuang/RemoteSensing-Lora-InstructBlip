@@ -5,17 +5,20 @@ Agile implementation of LoRA fine-tuning for InstructBLIP on RSICap dataset.
 ## Quick Start
 
 1. **Check your data paths in `config.py`**:
+
    ```python
    rsicap_images_dir = "data/rsgpt_dataset/RSICap/images"
    rsicap_captions_file = "data/rsgpt_dataset/RSICap/captions.json"
    ```
 
 2. **Test data loading**:
+
    ```bash
    python train_lora.py --test-data
    ```
 
 3. **Test model loading**:
+
    ```bash
    python train_lora.py --test-model
    ```
@@ -28,6 +31,7 @@ Agile implementation of LoRA fine-tuning for InstructBLIP on RSICap dataset.
 ## What You'll See
 
 The training will show:
+
 - Real-time loss curves (train & validation)
 - Memory usage monitoring
 - Progress logging every 10 steps
@@ -85,7 +89,7 @@ for config in configs:
 
 ## Memory Requirements
 
-- RTX 3090 (24GB): ✅ Should work fine
+- RTX 3090 (24GB): Should work fine
 - RTX 3080 (10GB): Reduce batch_size to 2
 - RTX 4060 (8GB): Reduce batch_size to 1
 
@@ -98,6 +102,7 @@ for config in configs:
 ## Next Steps
 
 After getting basic training working:
+
 1. Add data augmentation
 2. Implement hyperparameter sweeps
 3. Add RSIEval evaluation

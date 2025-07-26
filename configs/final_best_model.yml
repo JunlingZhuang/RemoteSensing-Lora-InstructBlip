@@ -1,0 +1,68 @@
+# Final Best Model Configuration
+# Based on comprehensive grid search analysis
+# Winner: exp3_r24_a64_d10_linear_augmented (val_loss: 1.2727)
+
+name: "final_best_model_v1"
+description: "Final training run with optimal parameters for best possible model"
+
+# Model Configuration
+model_name: "Salesforce/instructblip-flan-t5-xl"
+device: "cuda"
+torch_dtype: "float32"
+
+# LoRA Configuration (Optimal from grid search)
+lora_r: 24                    # Sweet spot for capacity vs efficiency
+lora_alpha: 64                # Best performing alpha value
+lora_dropout: 0.10            # Optimal regularization for r=24
+target_modules: ["query", "key", "value", "dense"]
+
+# Training Configuration
+learning_rate: 0.0001         # Proven stable learning rate
+batch_size: 8                 # Memory-efficient batch size
+num_epochs: 30                # Extended training (was 15, increase for better convergence)
+warmup_steps: 500             # Increased warmup for stability
+weight_decay: 0.0             # No weight decay (worked well)
+max_grad_norm: 0.3            # Gradient clipping for stability
+
+# Learning Rate Scheduler
+scheduler_type: "linear"      # Linear outperformed cosine
+start_factor: 0.1             # Gentle warmup start
+min_lr: 5.0e-6               # Lower minimum LR for fine-tuning
+cosine_restarts: false        # Keep simple linear schedule
+
+# Early Stopping (Enhanced)
+early_stopping_enabled: true
+early_stopping_patience: 5    # Increased patience for final run
+min_delta: 0.0005            # Smaller threshold for improvements
+
+# Data Configuration
+train_split: 0.8
+val_split: 0.2
+random_seed: 42
+
+# Data Source (Use full augmented dataset)
+data_source: "augmented"
+rsicap_captions_file: "data/rsgpt_dataset/RSICap_augmented/captions.json"
+rsicap_images_dir: "data/rsgpt_dataset/RSICap_augmented/images"
+max_samples: null             # Use ALL data (remove limit)
+
+# Logging and Saving
+save_dir: "checkpoints/final_best_model_v1"
+log_every: 10
+save_every_epoch: true        # Save all checkpoints for safety
+
+# Augmentation (Use proven config)
+augmentation_config:
+  aug_prob: 0.8
+  enable_spatial: true
+  enable_crop: true
+  crop_scale: [0.8, 1.0]
+  enable_color: true
+  brightness_factor: 0.3
+  contrast_factor: 0.3
+  saturation_factor: 0.2
+  hue_factor: 0.1
+  enable_blur: true
+  blur_sigma: [0.3, 1.0]
+  enable_grayscale: true
+  grayscale_prob: 0.1

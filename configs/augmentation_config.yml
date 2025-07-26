@@ -54,7 +54,7 @@ enable_noise: false # 开关：噪声增强 (暂未实现)
 # 预设配置示例
 # =============================================================================
 
-# 保守配置 (轻微增强，保持图像质量)
+# Conservative configuration (light augmentation, maintain image quality)
 conservative_config:
   aug_prob: 0.6
   image_size: 224
@@ -71,16 +71,16 @@ conservative_config:
   enable_grayscale: false
   enable_blur: false
 
-# 高分辨率配置 (保留更多细节信息)
+# High resolution configuration (preserve more detail information)
 high_resolution_config:
   aug_prob: 0.8
-  image_size: 384 # 更高分辨率
+  image_size: 384 # Higher resolution
   enable_spatial: true
   enable_crop: true
-  crop_scale: [0.85, 1.0] # 稍微保守的裁剪
-  crop_ratio: [0.95, 1.05] # 更保守的宽高比
+  crop_scale: [0.85, 1.0] # Slightly conservative cropping
+  crop_ratio: [0.95, 1.05] # More conservative aspect ratio
   enable_affine: true
-  translate_range: [0.05, 0.05] # 更小的平移
+  translate_range: [0.05, 0.05] # Smaller translation
   enable_color: true
   enable_color_jitter: true
   brightness: 0.15
@@ -88,8 +88,8 @@ high_resolution_config:
   saturation: 0.1
   hue: 0.03
   enable_grayscale: true
-  grayscale_prob: 0.05 # 降低灰度概率
-  enable_blur: false # 禁用模糊以保持清晰度
+  grayscale_prob: 0.05 # Reduce grayscale probability
+  enable_blur: false # Disable blur to maintain clarity
 
 # 激进配置 (强增强，最大化数据多样性)
 aggressive_config:

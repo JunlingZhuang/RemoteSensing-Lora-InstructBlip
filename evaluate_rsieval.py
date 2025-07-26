@@ -48,6 +48,9 @@ import sys
 import torch
 from pathlib import Path
 from tqdm import tqdm
+import re
+from sentence_transformers import SentenceTransformer
+import numpy as np
 
 # Add module to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'module'))
@@ -55,6 +58,130 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'module'))
 from config import Config
 from data.rsicap_dataset import load_rsieval_vqa_data
 from inference.inferencer import ModelInferencer
+
+# Initialize SentenceTransformer model for semantic similarity
+SEMANTIC_MODEL = None
+
+def get_semantic_model():
+    """Lazy loading of SentenceTransformer model"""
+    global SEMANTIC_MODEL
+    if SEMANTIC_MODEL is None:
+        print("Loading SentenceTransformer model for semantic similarity...")
+        SEMANTIC_MODEL = SentenceTransformer('all-MiniLM-L6-v2')
+    return SEMANTIC_MODEL
+
+def evaluate_answer_correctness(predicted_answer, ground_truth_answer, question_type):
+    """
+    Evaluate answer correctness using targeted approaches for different RSIEval categories.
+
+    Args:
+        predicted_answer: Generated answer from model
+        ground_truth_answer: Ground truth answer
+        question_type: Type of question (e.g., 'presence', 'quantity', etc.)
+
+    Returns:
+        bool: True if answer is correct, False otherwise
+    """
+    # Clean answers
+    pred_clean = predicted_answer.lower().strip().rstrip('.')
+    gt_clean = ground_truth_answer.lower().strip().rstrip('.')
+
+    # For yes/no questions, use string processing and synonym matching
+    if is_yes_no_question(gt_clean):
+        return evaluate_yes_no_answer(pred_clean, gt_clean)
+
+    # For simple numeric or short answers, use exact/substring matching
+    if len(gt_clean.split()) <= 2 or gt_clean.isdigit():
+        return evaluate_simple_answer(pred_clean, gt_clean)
+
+    # For complex reasoning questions, use semantic similarity
+    return evaluate_semantic_similarity(pred_clean, gt_clean)
+
+def is_yes_no_question(answer):
+    """Check if answer is yes/no type"""
+    yes_no_words = {'yes', 'no', 'true', 'false'}
+    return answer.lower().strip() in yes_no_words
+
+def evaluate_yes_no_answer(predicted, ground_truth):
+    """Evaluate yes/no answers with synonym matching"""
+    # Define synonyms
+    yes_synonyms = {'yes', 'true', 'correct', 'right', 'positive', 'affirmative'}
+    no_synonyms = {'no', 'false', 'incorrect', 'wrong', 'negative'}
+
+    # Check if ground truth is yes or no
+    gt_is_yes = any(syn in ground_truth for syn in yes_synonyms)
+    gt_is_no = any(syn in ground_truth for syn in no_synonyms)
+
+    # Check predicted answer
+    pred_is_yes = any(syn in predicted for syn in yes_synonyms)
+    pred_is_no = any(syn in predicted for syn in no_synonyms)
+
+    # Match logic
+    if gt_is_yes and pred_is_yes:
+        return True
+    if gt_is_no and pred_is_no:
+        return True
+
+    return False
+
+def evaluate_simple_answer(predicted, ground_truth):
+    """Evaluate simple answers using substring matching"""
+    # Try exact match first
+    if predicted == ground_truth:
+        return True
+
+    # Try substring matching (ground truth in predicted)
+    if ground_truth in predicted:
+        return True
+
+    # Try reverse substring matching (predicted in ground truth)
+    if predicted in ground_truth:
+        return True
+
+    return False
+
+def evaluate_semantic_similarity(predicted, ground_truth, threshold=0.75):
+    """
+    Evaluate semantic similarity using SentenceTransformers.
+
+    Args:
+        predicted: Predicted answer
+        ground_truth: Ground truth answer
+        threshold: Similarity threshold (default 0.75)
+
+    Returns:
+        bool: True if similarity >= threshold
+    """
+    try:
+        model = get_semantic_model()
+
+        # Get embeddings (384-dimensional for all-MiniLM-L6-v2)
+        embeddings = model.encode([predicted, ground_truth])
+        pred_embedding = embeddings[0]
+        gt_embedding = embeddings[1]
+
+        # Calculate cosine similarity
+        similarity = np.dot(pred_embedding, gt_embedding) / (
+            np.linalg.norm(pred_embedding) * np.linalg.norm(gt_embedding)
+        )
+
+        return similarity >= threshold
+
+    except Exception as e:
+        print(f"Warning: Semantic similarity evaluation failed: {e}")
+        # Fallback to simple string matching
+        return evaluate_simple_answer(predicted, ground_truth)
+
+def get_evaluation_method(ground_truth_answer, question_type):
+    """Get the evaluation method used for debugging purposes"""
+    gt_clean = ground_truth_answer.lower().strip().rstrip('.')
+
+    if is_yes_no_question(gt_clean):
+        return "yes_no_matching"
+    elif len(gt_clean.split()) <= 2 or gt_clean.isdigit():
+        return "simple_matching"
+    else:
+        return "semantic_similarity"
 
 
 def fix_lora_adapter_config(checkpoint_path):
@@ -204,9 +331,16 @@ def evaluate_model_vqa_on_rsieval(rsieval_path, model_type="instructblip", lora_
     
     results = []
     correct_answers = 0
-    
+
     # Track accuracy by question type
     type_stats = {}
+
+    # Track evaluation method usage
+    evaluation_method_stats = {
+        "yes_no_matching": {"total": 0, "correct": 0},
+        "simple_matching": {"total": 0, "correct": 0},
+        "semantic_similarity": {"total": 0, "correct": 0}
+    }
     
     print(f"Running VQA inference on {len(limited_samples)} QA pairs...")
     for i, sample in enumerate(tqdm(limited_samples)):
@@ -232,16 +366,17 @@ def evaluate_model_vqa_on_rsieval(rsieval_path, model_type="instructblip", lora_
             # Clear GPU cache periodically to prevent memory accumulation
             if (i + 1) % 50 == 0:
                 torch.cuda.empty_cache()
-                print(f"🧹 GPU cache cleared at sample {i + 1}")
+                print(f"GPU cache cleared at sample {i + 1}")
             
-            # Simple answer matching (case-insensitive)
-            # Remove punctuation for better matching
-            gt_clean = sample['answer'].lower().strip().rstrip('.')
-            gen_clean = generated_answer.lower().strip()
-            is_correct = gt_clean in gen_clean
+            # Evaluate answer correctness using targeted approaches
+            is_correct = evaluate_answer_correctness(
+                generated_answer,
+                sample['answer'],
+                sample['type']
+            )
             if is_correct:
                 correct_answers += 1
-            
+
             # Update type statistics
             question_type = sample['type']
             if question_type not in type_stats:
@@ -249,6 +384,12 @@ def evaluate_model_vqa_on_rsieval(rsieval_path, model_type="instructblip", lora_
             type_stats[question_type]['total'] += 1
             if is_correct:
                 type_stats[question_type]['correct'] += 1
+
+            # Update evaluation method statistics
+            eval_method = get_evaluation_method(sample['answer'], sample['type'])
+            evaluation_method_stats[eval_method]['total'] += 1
+            if is_correct:
+                evaluation_method_stats[eval_method]['correct'] += 1
             
             result = {
                 "sample_id": i,
@@ -257,7 +398,8 @@ def evaluate_model_vqa_on_rsieval(rsieval_path, model_type="instructblip", lora_
                 "ground_truth_answer": sample['answer'],
                 "generated_answer": generated_answer,
                 "question_type": sample['type'],
-                "is_correct": is_correct
+                "is_correct": is_correct,
+                "evaluation_method": get_evaluation_method(sample['answer'], sample['type'])
             }
             results.append(result)
             
@@ -310,6 +452,15 @@ def evaluate_model_vqa_on_rsieval(rsieval_path, model_type="instructblip", lora_
     print(f"{'='*60}")
     print(f"Overall Accuracy: {final_accuracy:.2f}% ({correct_answers}/{len(results)})")
     print(f"{'='*60}")
+
+    # Print evaluation method statistics
+    print("\nEVALUATION METHOD BREAKDOWN")
+    print(f"{'='*60}")
+    for method, stats in evaluation_method_stats.items():
+        if stats['total'] > 0:
+            method_accuracy = stats['correct'] / stats['total'] * 100
+            print(f"{method:20s}: {method_accuracy:6.2f}% ({stats['correct']:3d}/{stats['total']:3d})")
+    print(f"{'='*60}")
     
     # Save results
     if output_path:
@@ -331,6 +482,7 @@ def evaluate_model_vqa_on_rsieval(rsieval_path, model_type="instructblip", lora_
             "correct_answers": correct_answers,
             "accuracy_by_type": type_accuracies,
             "type_statistics": type_stats,
+            "evaluation_method_statistics": evaluation_method_stats,
             "generation_config": {
                 "max_new_tokens": 300,
                 "num_beams": 1,
