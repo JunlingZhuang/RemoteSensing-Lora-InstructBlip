@@ -19,11 +19,11 @@ from training.trainer import LoRATrainer
 import torch
 import gc
 
-# 强制清理
+# clean
 torch.cuda.empty_cache()
 gc.collect()
 
-# 中国镜像支持
+# hf mirror in vm
 os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
 
 # ============================================================================
@@ -97,8 +97,7 @@ def train_single_config(config_path):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     config.save_dir = f"checkpoints/{config_name}_{timestamp}"
     os.makedirs(config.save_dir, exist_ok=True)
-    
-    # 数据路径已在 config.py 中正确设置
+
 
     # Display configuration
     print(f"Training Configuration:")
@@ -150,7 +149,7 @@ def train_single_config(config_path):
     )
     print("Trainer created successfully!")
 
-    # 验证 LoRA 配置
+
     model.verify_lora_training()
 
     # Start training
@@ -193,15 +192,14 @@ def train_single_config(config_path):
     for epoch in range(config.num_epochs):
         print(f"\n--- Epoch {epoch + 1}/{config.num_epochs} ---")
 
-        # 训练
+        # train
         train_loss, epoch_time = trainer.train_epoch(epoch)
 
-        # 验证
+        # val
         val_loss = trainer.validate(epoch)
 
         print(f"Epoch {epoch + 1}: Train={train_loss:.4f}, Val={val_loss:.4f}, Time={epoch_time:.1f}s")
 
-        # 保存每个epoch的历史记录
         epoch_summary = {
             "epoch": epoch + 1,
             "train_loss": train_loss,
@@ -211,12 +209,10 @@ def train_single_config(config_path):
             "timestamp": datetime.now().isoformat()
         }
 
-        # 保存单个epoch总结
         epoch_file = os.path.join(config.save_dir, f"epoch_{epoch+1}_summary.json")
         with open(epoch_file, 'w', encoding='utf-8') as f:
             json.dump(epoch_summary, f, ensure_ascii=False, indent=2)
 
-        # 保存累积历史
         history_file = os.path.join(config.save_dir, "training_history.json")
         if os.path.exists(history_file):
             with open(history_file, 'r', encoding='utf-8') as f:
@@ -254,7 +250,6 @@ def train_single_config(config_path):
             trainer.plot_losses()
             print(f"Training curves saved to: {config.save_dir}/training_curves.png")
 
-    # 保存基本总结
     summary = {
         "training_completed": datetime.now().isoformat(),
         "config": yaml_config,
