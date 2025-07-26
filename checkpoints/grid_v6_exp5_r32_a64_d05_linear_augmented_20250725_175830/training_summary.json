@@ -1,0 +1,33 @@
+{
+  "training_completed": "2025-07-25T20:07:55.136153",
+  "config": {
+    "name": "grid_v6_exp5_r32_a64_d05_linear_augmented",
+    "description": "V6 Exp5 Augmented: High rank with high alpha, low dropout, linear scheduler on augmented dataset",
+    "num_epochs": 15,
+    "batch_size": 8,
+    "learning_rate": 0.0001,
+    "max_samples": 7755,
+    "lora_r": 32,
+    "lora_alpha": 64,
+    "lora_dropout": 0.05,
+    "warmup_steps": 250,
+    "max_grad_norm": 0.3,
+    "scheduler_type": "linear",
+    "start_factor": 0.1,
+    "early_stopping_enabled": true,
+    "early_stopping_patience": 3,
+    "min_delta": 0.001,
+    "val_split": 0.2,
+    "random_seed": 42,
+    "torch_dtype": "float32",
+    "data_source": "augmented"
+  },
+  "final_losses": {
+    "train_loss": 1.3579409223856385,
+    "val_loss": 1.276991522189268
+  },
+  "best_val_loss": 1.2737844312928386,
+  "total_epochs": 15,
+  "total_training_time": 6589.045135736465,
+  "checkpoints_dir": "checkpoints/grid_v6_exp5_r32_a64_d05_linear_augmented_20250725_175830"
+}

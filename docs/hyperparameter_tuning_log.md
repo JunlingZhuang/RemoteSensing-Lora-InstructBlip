@@ -124,34 +124,3 @@ BEST_CONFIG = {
 ```
 
 This gets validation loss down to 1.2727, which is pretty solid.
-
-## Debugging Tips
-
-If your training is acting weird:
-
-1. **NaN values**: Check dtype (use float32) and gradient clipping
-2. **No convergence**: Learning rate probably too low
-3. **Oscillating loss**: Learning rate too high or batch size too small
-4. **Overfitting**: Reduce LoRA rank or increase dropout
-5. **OOM errors**: Reduce batch size (InstructBLIP is memory-hungry)
-
-## Implementation Notes
-
-Had to implement custom forward pass because HuggingFace's InstructBLIP forward method conflicts with LoRA's `inputs_embeds` parameter. The solution was to manually chain:
-
-1. Vision encoder → image features
-2. Q-Former → query embeddings  
-3. Language model → text generation
-
-Also added extensive numerical validation checks throughout the pipeline.
-
-## Future Work
-
-- Try different LoRA target modules (currently using Q-Former only)
-- Experiment with different warmup strategies
-- Test on larger datasets (current experiments on ~2K samples)
-- Investigate why cosine scheduling performs poorly
-
----
-
-*Last updated: Based on V6 grid search results*

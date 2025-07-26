@@ -1,0 +1,28 @@
+{
+  "training_completed": "2025-07-24T03:53:52.788317",
+  "config": {
+    "name": "grid_v1_large_batch_high_lr_SKIPPED",
+    "description": "Grid search V1: SKIPPED due to OOM risk. Original batch_size=32 too large for 48GB GPU with InstructBLIP+LoRA",
+    "num_epochs": 6,
+    "batch_size": 12,
+    "learning_rate": 0.0008,
+    "max_samples": 2068,
+    "lora_r": 8,
+    "lora_alpha": 16,
+    "lora_dropout": 0.1,
+    "warmup_steps": 100,
+    "max_grad_norm": 1.0,
+    "start_factor": 0.1,
+    "val_split": 0.2,
+    "random_seed": 42,
+    "torch_dtype": "float32"
+  },
+  "final_losses": {
+    "train_loss": 1.5871872357550385,
+    "val_loss": 1.468744863163341
+  },
+  "best_val_loss": 1.4498158314011313,
+  "total_epochs": 6,
+  "total_training_time": 867.1521406173706,
+  "checkpoints_dir": "checkpoints/grid_v1_large_batch_high_lr_SKIPPED_20250724_033641"
+}

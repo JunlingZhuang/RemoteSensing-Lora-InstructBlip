@@ -22,7 +22,7 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# PyTorch
+# PyTorch model files (but keep checkpoints folder structure)
 *.pth
 *.pt
 *.ckpt
@@ -138,13 +138,26 @@ RSGPT/
 *.csv
 *.tsv
 
-# Model files and checkpoints
-checkpoints/
+# Model files (but keep checkpoints folder structure)
+# checkpoints/ - commented out to keep folder structure
 /models/
 *.bin
 *.safetensors
 model_cache/
 huggingface_cache/
+
+# Keep checkpoints folder structure but ignore model files inside
+checkpoints/**/*.pth
+checkpoints/**/*.pt
+checkpoints/**/*.ckpt
+checkpoints/**/*.bin
+checkpoints/**/*.safetensors
+
+# But keep important files in checkpoints
+!checkpoints/**/config.yml
+!checkpoints/**/training_summary*.json
+!checkpoints/**/training_curves.png
+!checkpoints/**/README.md
 
 # Training outputs
 runs/
@@ -286,6 +299,6 @@ mlruns/
 Thumbs.db
 
 # Custom ignores for this project
-training_curves.png
-training_summary*.json
-checkpoint_*.pth
+# training_curves.png - keep these for documentation
+# training_summary*.json - keep these for analysis
+# checkpoint_*.pth - already covered by *.pth pattern above

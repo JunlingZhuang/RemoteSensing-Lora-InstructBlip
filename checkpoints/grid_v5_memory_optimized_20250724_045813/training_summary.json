@@ -1,0 +1,28 @@
+{
+  "training_completed": "2025-07-24T05:34:43.828134",
+  "config": {
+    "name": "grid_v5_memory_optimized",
+    "description": "Grid search V5: Memory optimized configuration based on OOM analysis. Conservative batch size with balanced hyperparameters.",
+    "num_epochs": 12,
+    "batch_size": 6,
+    "learning_rate": 0.0008,
+    "max_samples": 2068,
+    "lora_r": 16,
+    "lora_alpha": 32,
+    "lora_dropout": 0.05,
+    "warmup_steps": 180,
+    "max_grad_norm": 0.6,
+    "start_factor": 0.06,
+    "val_split": 0.2,
+    "random_seed": 42,
+    "torch_dtype": "float32"
+  },
+  "final_losses": {
+    "train_loss": 1.9740009242209835,
+    "val_loss": 1.8442258999265473
+  },
+  "best_val_loss": 1.5975817839304607,
+  "total_epochs": 12,
+  "total_training_time": 1865.0182456970215,
+  "checkpoints_dir": "checkpoints/grid_v5_memory_optimized_20250724_045813"
+}

@@ -1,0 +1,28 @@
+{
+  "training_completed": "2025-07-24T04:17:01.067790",
+  "config": {
+    "name": "grid_v2_medium_batch_high_rank",
+    "description": "Grid search V2: Medium batch with high LoRA rank for increased model capacity",
+    "num_epochs": 8,
+    "batch_size": 10,
+    "learning_rate": 0.0005,
+    "max_samples": 2068,
+    "lora_r": 16,
+    "lora_alpha": 32,
+    "lora_dropout": 0.05,
+    "warmup_steps": 150,
+    "max_grad_norm": 0.5,
+    "start_factor": 0.05,
+    "val_split": 0.2,
+    "random_seed": 42,
+    "torch_dtype": "float32"
+  },
+  "final_losses": {
+    "train_loss": 1.5207240713967218,
+    "val_loss": 1.4352687734823961
+  },
+  "best_val_loss": 1.4273115809147174,
+  "total_epochs": 8,
+  "total_training_time": 1177.349237203598,
+  "checkpoints_dir": "checkpoints/grid_v2_medium_batch_high_rank_20250724_035352"
+}

@@ -1,0 +1,150 @@
+{
+  "training_completed": true,
+  "total_epochs": 12,
+  "final_train_loss": 1.9740009242209835,
+  "final_val_loss": 1.8442258999265473,
+  "best_val_loss": 1.5975817839304607,
+  "best_val_epoch": 1,
+  "total_training_time": 1865.0182456970215,
+  "avg_epoch_time": 155.41818714141846,
+  "epoch_details": [
+    {
+      "epoch": 1,
+      "train_loss": 1.7462743862815526,
+      "val_loss": 1.5975817839304607,
+      "learning_rate": 0.0007999999999999978,
+      "epoch_time": 154.97552251815796,
+      "train_batches": 345,
+      "val_batches": 87
+    },
+    {
+      "epoch": 2,
+      "train_loss": 1.838295527126478,
+      "val_loss": 1.9997314063982032,
+      "learning_rate": 0.0007999999999999978,
+      "epoch_time": 155.17582774162292,
+      "train_batches": 345,
+      "val_batches": 87
+    },
+    {
+      "epoch": 3,
+      "train_loss": 1.954300489978514,
+      "val_loss": 1.862111879491258,
+      "learning_rate": 0.0007999999999999978,
+      "epoch_time": 156.00403261184692,
+      "train_batches": 345,
+      "val_batches": 87
+    },
+    {
+      "epoch": 4,
+      "train_loss": 1.9871169307957526,
+      "val_loss": 1.8548472050962777,
+      "learning_rate": 0.0007999999999999978,
+      "epoch_time": 155.23203468322754,
+      "train_batches": 345,
+      "val_batches": 87
+    },
+    {
+      "epoch": 5,
+      "train_loss": 1.9789653356524481,
+      "val_loss": 1.857395643475412,
+      "learning_rate": 0.0007999999999999978,
+      "epoch_time": 155.27529859542847,
+      "train_batches": 345,
+      "val_batches": 87
+    },
+    {
+      "epoch": 6,
+      "train_loss": 1.9792808346126392,
+      "val_loss": 1.8536142713722141,
+      "learning_rate": 0.0007999999999999978,
+      "epoch_time": 155.09514832496643,
+      "train_batches": 345,
+      "val_batches": 87
+    },
+    {
+      "epoch": 7,
+      "train_loss": 1.9761623247810032,
+      "val_loss": 1.8496344349850182,
+      "learning_rate": 0.0007999999999999978,
+      "epoch_time": 155.03156113624573,
+      "train_batches": 345,
+      "val_batches": 87
+    },
+    {
+      "epoch": 8,
+      "train_loss": 1.9736838292384493,
+      "val_loss": 1.8441012741505414,
+      "learning_rate": 0.0007999999999999978,
+      "epoch_time": 155.86042594909668,
+      "train_batches": 345,
+      "val_batches": 87
+    },
+    {
+      "epoch": 9,
+      "train_loss": 1.973914353052775,
+      "val_loss": 1.8479335280670517,
+      "learning_rate": 0.0007999999999999978,
+      "epoch_time": 155.94243121147156,
+      "train_batches": 345,
+      "val_batches": 87
+    },
+    {
+      "epoch": 10,
+      "train_loss": 1.9751791594684989,
+      "val_loss": 1.8346079861980744,
+      "learning_rate": 0.0007999999999999978,
+      "epoch_time": 155.6505846977234,
+      "train_batches": 345,
+      "val_batches": 87
+    },
+    {
+      "epoch": 11,
+      "train_loss": 1.9747890009396318,
+      "val_loss": 1.8420039237230674,
+      "learning_rate": 0.0007999999999999978,
+      "epoch_time": 155.50292801856995,
+      "train_batches": 345,
+      "val_batches": 87
+    },
+    {
+      "epoch": 12,
+      "train_loss": 1.9740009242209835,
+      "val_loss": 1.8442258999265473,
+      "learning_rate": 0.0007999999999999978,
+      "epoch_time": 155.27245020866394,
+      "train_batches": 345,
+      "val_batches": 87
+    }
+  ],
+  "config": {
+    "model_name": "Salesforce/instructblip-flan-t5-xl",
+    "device": "cuda",
+    "torch_dtype": "float32",
+    "lora_r": 16,
+    "lora_alpha": 32,
+    "lora_dropout": 0.05,
+    "target_modules": [
+      "query",
+      "key",
+      "value",
+      "dense"
+    ],
+    "learning_rate": 0.0008,
+    "batch_size": 6,
+    "num_epochs": 12,
+    "warmup_steps": 180,
+    "weight_decay": 0.0,
+    "max_grad_norm": 0.6,
+    "train_split": 0.8,
+    "val_split": 0.2,
+    "random_seed": 42,
+    "save_dir": "checkpoints/grid_v5_memory_optimized_20250724_045813",
+    "log_every": 10,
+    "save_every_epoch": true,
+    "max_samples": 2068,
+    "start_factor": 0.06,
+    "rsicap_captions_file": "data/rsgpt_dataset/RSICap/captions.json",
+    "rsicap_images_dir": "data/rsgpt_dataset/RSICap/images"
+  }
+}

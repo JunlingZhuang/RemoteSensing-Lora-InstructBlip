@@ -1,0 +1,34 @@
+{
+  "training_completed": "2025-07-26T00:26:21.650946",
+  "config": {
+    "name": "grid_v6_exp7_r16_a48_d10_cosine_augmented",
+    "description": "V6 Exp7 Augmented: Conservative rank with medium alpha, high dropout, cosine scheduler on augmented dataset",
+    "num_epochs": 15,
+    "batch_size": 8,
+    "learning_rate": 0.0002,
+    "max_samples": 7755,
+    "lora_r": 16,
+    "lora_alpha": 48,
+    "lora_dropout": 0.1,
+    "warmup_steps": 250,
+    "max_grad_norm": 0.3,
+    "scheduler_type": "cosine",
+    "min_lr": 1e-06,
+    "cosine_restarts": false,
+    "early_stopping_enabled": true,
+    "early_stopping_patience": 3,
+    "min_delta": 0.001,
+    "val_split": 0.2,
+    "random_seed": 42,
+    "torch_dtype": "float32",
+    "data_source": "augmented"
+  },
+  "final_losses": {
+    "train_loss": 1.3897840041167957,
+    "val_loss": 1.2985225768433404
+  },
+  "best_val_loss": 1.2939629364259464,
+  "total_epochs": 15,
+  "total_training_time": 6582.830192327499,
+  "checkpoints_dir": "checkpoints/grid_v6_exp7_r16_a48_d10_cosine_augmented_20250725_221710"
+}

@@ -1,0 +1,184 @@
+{
+  "training_completed": true,
+  "total_epochs": 15,
+  "final_train_loss": 1.4577869995660389,
+  "final_val_loss": 1.342824482426201,
+  "best_val_loss": 1.338539402509473,
+  "best_val_epoch": 14,
+  "total_training_time": 6573.015410661697,
+  "avg_epoch_time": 438.2010273774465,
+  "epoch_details": [
+    {
+      "epoch": 1,
+      "train_loss": 1.7290030270814896,
+      "val_loss": 1.5110579507867086,
+      "learning_rate": 8.36219650147693e-05,
+      "epoch_time": 438.0090525150299,
+      "train_batches": 776,
+      "val_batches": 194
+    },
+    {
+      "epoch": 2,
+      "train_loss": 1.6185820293180722,
+      "val_loss": 1.4696930339655925,
+      "learning_rate": 4.532584106827277e-05,
+      "epoch_time": 437.5548176765442,
+      "train_batches": 776,
+      "val_batches": 194
+    },
+    {
+      "epoch": 3,
+      "train_loss": 1.5873741430720103,
+      "val_loss": 1.4459695293731296,
+      "learning_rate": 1.0453658778438052e-05,
+      "epoch_time": 439.98442029953003,
+      "train_batches": 776,
+      "val_batches": 194
+    },
+    {
+      "epoch": 4,
+      "train_loss": 1.5676605598520987,
+      "val_loss": 1.4213618138401778,
+      "learning_rate": 2.081693763677872e-06,
+      "epoch_time": 441.12924551963806,
+      "train_batches": 776,
+      "val_batches": 194
+    },
+    {
+      "epoch": 5,
+      "train_loss": 1.5482850792174487,
+      "val_loss": 1.422014769819594,
+      "learning_rate": 2.5750000000007107e-05,
+      "epoch_time": 438.82124280929565,
+      "train_batches": 776,
+      "val_batches": 194
+    },
+    {
+      "epoch": 6,
+      "train_loss": 1.534010332269767,
+      "val_loss": 1.4042383334071367,
+      "learning_rate": 6.579634122156705e-05,
+      "epoch_time": 437.4956953525543,
+      "train_batches": 776,
+      "val_batches": 194
+    },
+    {
+      "epoch": 7,
+      "train_loss": 1.5229294528973472,
+      "val_loss": 1.3934989479399218,
+      "learning_rate": 9.572050015330543e-05,
+      "epoch_time": 438.7696714401245,
+      "train_batches": 776,
+      "val_batches": 194
+    },
+    {
+      "epoch": 8,
+      "train_loss": 1.5121179746905553,
+      "val_loss": 1.3799621702469502,
+      "learning_rate": 9.572050015339705e-05,
+      "epoch_time": 437.4331223964691,
+      "train_batches": 776,
+      "val_batches": 194
+    },
+    {
+      "epoch": 9,
+      "train_loss": 1.5019483457213825,
+      "val_loss": 1.3766626260944248,
+      "learning_rate": 6.579634122168965e-05,
+      "epoch_time": 437.24003744125366,
+      "train_batches": 776,
+      "val_batches": 194
+    },
+    {
+      "epoch": 10,
+      "train_loss": 1.4942797204268348,
+      "val_loss": 1.3654835408495873,
+      "learning_rate": 2.5749999999958532e-05,
+      "epoch_time": 436.4741280078888,
+      "train_batches": 776,
+      "val_batches": 194
+    },
+    {
+      "epoch": 11,
+      "train_loss": 1.4849743916816318,
+      "val_loss": 1.3697279839171577,
+      "learning_rate": 2.0816937636766186e-06,
+      "epoch_time": 437.7954680919647,
+      "train_batches": 776,
+      "val_batches": 194
+    },
+    {
+      "epoch": 12,
+      "train_loss": 1.478469033370313,
+      "val_loss": 1.3643521371575975,
+      "learning_rate": 1.0453658778450095e-05,
+      "epoch_time": 436.355562210083,
+      "train_batches": 776,
+      "val_batches": 194
+    },
+    {
+      "epoch": 13,
+      "train_loss": 1.472058745389132,
+      "val_loss": 1.350800233403432,
+      "learning_rate": 4.532584106832587e-05,
+      "epoch_time": 438.6582455635071,
+      "train_batches": 776,
+      "val_batches": 194
+    },
+    {
+      "epoch": 14,
+      "train_loss": 1.4630043448246632,
+      "val_loss": 1.338539402509473,
+      "learning_rate": 8.36219650149672e-05,
+      "epoch_time": 438.41121435165405,
+      "train_batches": 776,
+      "val_batches": 194
+    },
+    {
+      "epoch": 15,
+      "train_loss": 1.4577869995660389,
+      "val_loss": 1.342824482426201,
+      "learning_rate": 9.999999999991754e-05,
+      "epoch_time": 438.8834869861603,
+      "train_batches": 776,
+      "val_batches": 194
+    }
+  ],
+  "config": {
+    "model_name": "Salesforce/instructblip-flan-t5-xl",
+    "device": "cuda",
+    "torch_dtype": "float32",
+    "lora_r": 24,
+    "lora_alpha": 48,
+    "lora_dropout": 0.05,
+    "target_modules": [
+      "query",
+      "key",
+      "value",
+      "dense"
+    ],
+    "learning_rate": 0.0001,
+    "batch_size": 8,
+    "num_epochs": 15,
+    "warmup_steps": 250,
+    "weight_decay": 0.0,
+    "max_grad_norm": 0.3,
+    "scheduler_type": "cosine",
+    "start_factor": 0.1,
+    "min_lr": 1e-06,
+    "cosine_restarts": false,
+    "early_stopping_patience": 3,
+    "min_delta": 0.001,
+    "early_stopping_enabled": true,
+    "train_split": 0.8,
+    "val_split": 0.2,
+    "random_seed": 42,
+    "save_dir": "checkpoints/grid_v6_exp4_r24_a48_d05_cosine_augmented_20250725_154933",
+    "log_every": 10,
+    "save_every_epoch": true,
+    "max_samples": 7755,
+    "data_source": "augmented",
+    "rsicap_captions_file": "data/rsgpt_dataset/RSICap_augmented/captions.json",
+    "rsicap_images_dir": "data/rsgpt_dataset/RSICap_augmented/images"
+  }
+}

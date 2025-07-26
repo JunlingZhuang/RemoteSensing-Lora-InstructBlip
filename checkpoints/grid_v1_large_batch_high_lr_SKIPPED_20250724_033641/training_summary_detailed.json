@@ -1,0 +1,96 @@
+{
+  "training_completed": true,
+  "total_epochs": 6,
+  "final_train_loss": 1.5871872357550385,
+  "final_val_loss": 1.468744863163341,
+  "best_val_loss": 1.4498158314011313,
+  "best_val_epoch": 5,
+  "total_training_time": 867.1521406173706,
+  "avg_epoch_time": 144.52535676956177,
+  "epoch_details": [
+    {
+      "epoch": 1,
+      "train_loss": 1.7757246652779552,
+      "val_loss": 1.5204734612594952,
+      "learning_rate": 0.0008000000000000005,
+      "epoch_time": 144.80257511138916,
+      "train_batches": 173,
+      "val_batches": 44
+    },
+    {
+      "epoch": 2,
+      "train_loss": 1.6244595388456575,
+      "val_loss": 1.4934654317118905,
+      "learning_rate": 0.0008000000000000005,
+      "epoch_time": 144.4237151145935,
+      "train_batches": 173,
+      "val_batches": 44
+    },
+    {
+      "epoch": 3,
+      "train_loss": 1.5979344328014837,
+      "val_loss": 1.4681827290491625,
+      "learning_rate": 0.0008000000000000005,
+      "epoch_time": 143.93106126785278,
+      "train_batches": 173,
+      "val_batches": 44
+    },
+    {
+      "epoch": 4,
+      "train_loss": 1.5826104762237196,
+      "val_loss": 1.4555053981867703,
+      "learning_rate": 0.0008000000000000005,
+      "epoch_time": 144.4505157470703,
+      "train_batches": 173,
+      "val_batches": 44
+    },
+    {
+      "epoch": 5,
+      "train_loss": 1.562660720307014,
+      "val_loss": 1.4498158314011313,
+      "learning_rate": 0.0008000000000000005,
+      "epoch_time": 144.63944935798645,
+      "train_batches": 173,
+      "val_batches": 44
+    },
+    {
+      "epoch": 6,
+      "train_loss": 1.5871872357550385,
+      "val_loss": 1.468744863163341,
+      "learning_rate": 0.0008000000000000005,
+      "epoch_time": 144.9048240184784,
+      "train_batches": 173,
+      "val_batches": 44
+    }
+  ],
+  "config": {
+    "model_name": "Salesforce/instructblip-flan-t5-xl",
+    "device": "cuda",
+    "torch_dtype": "float32",
+    "lora_r": 8,
+    "lora_alpha": 16,
+    "lora_dropout": 0.1,
+    "target_modules": [
+      "query",
+      "key",
+      "value",
+      "dense"
+    ],
+    "learning_rate": 0.0008,
+    "batch_size": 12,
+    "num_epochs": 6,
+    "warmup_steps": 100,
+    "weight_decay": 0.0,
+    "max_grad_norm": 1.0,
+    "train_split": 0.8,
+    "val_split": 0.2,
+    "random_seed": 42,
+    "save_dir": "checkpoints/grid_v1_large_batch_high_lr_SKIPPED_20250724_033641",
+    "log_every": 10,
+    "save_every_epoch": true,
+    "max_samples": 2068,
+    "start_factor": 0.1,
+    "rsicap_captions_file": "data/rsgpt_dataset/RSICap/captions.json",
+    "rsicap_images_dir": "data/rsgpt_dataset/RSICap/images"
+  }
+}

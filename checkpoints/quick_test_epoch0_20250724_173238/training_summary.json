@@ -1,0 +1,30 @@
+{
+  "training_completed": "2025-07-24T17:38:38.521650",
+  "config": {
+    "name": "quick_test_epoch0",
+    "description": "Quick test to verify epoch 0 recording in training curves",
+    "num_epochs": 2,
+    "batch_size": 2,
+    "learning_rate": 0.0001,
+    "max_samples": 10,
+    "lora_r": 4,
+    "lora_alpha": 8,
+    "lora_dropout": 0.1,
+    "warmup_steps": 5,
+    "max_grad_norm": 0.5,
+    "scheduler_type": "linear",
+    "start_factor": 0.1,
+    "early_stopping_enabled": false,
+    "val_split": 0.2,
+    "random_seed": 42,
+    "torch_dtype": "float32"
+  },
+  "final_losses": {
+    "train_loss": 2.3047229766845705,
+    "val_loss": 2.1797272982363847
+  },
+  "best_val_loss": 2.1797272982363847,
+  "total_epochs": 2,
+  "total_training_time": 4.1023054122924805,
+  "checkpoints_dir": "checkpoints/quick_test_epoch0_20250724_173238"
+}

@@ -141,24 +141,3 @@ Attempted to filter out conflicting parameters before calling forward. Didn't wo
 
 ### 3. Different LoRA Targets
 Tried applying LoRA only to specific modules. Still had the same parameter passing issue.
-
-## Lessons Learned
-
-1. **HuggingFace compatibility isn't guaranteed** - Sometimes you need custom implementations
-2. **LoRA integration can be tricky** - Parameter passing conflicts are common
-3. **Manual component chaining works** - When the high-level API fails, go low-level
-4. **Extensive validation is crucial** - Numerical issues are hard to debug without checks
-
-## Current Status
-
-The custom forward implementation is stable and works reliably with:
-- LoRA fine-tuning
-- Multiple batch sizes
-- Different LoRA configurations
-- Both training and inference
-
-It's now the standard approach used in all training scripts.
-
----
-
-*This analysis is based on extensive debugging across transformers versions 4.37.0, 4.44.0, and 4.53.0.dev0*

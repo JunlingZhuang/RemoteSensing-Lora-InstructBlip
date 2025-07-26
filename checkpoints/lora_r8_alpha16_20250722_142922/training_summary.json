@@ -1,0 +1,25 @@
+{
+  "training_completed": "2025-07-22T14:55:34.766004",
+  "config": {
+    "num_epochs": 6,
+    "batch_size": 10,
+    "learning_rate": 0.0005,
+    "max_samples": 200,
+    "lora_r": 8,
+    "lora_alpha": 16,
+    "lora_dropout": 0.1,
+    "warmup_steps": 50,
+    "max_grad_norm": 1.0,
+    "val_split": 0.2,
+    "random_seed": 42,
+    "torch_dtype": "float32"
+  },
+  "final_losses": {
+    "train_loss": 1.6704119086265563,
+    "val_loss": 1.559144799525921
+  },
+  "best_val_loss": 1.559144799525921,
+  "total_epochs": 6,
+  "total_training_time": 809.8560798168182,
+  "checkpoints_dir": "checkpoints/lora_r8_alpha16_20250722_142922"
+}

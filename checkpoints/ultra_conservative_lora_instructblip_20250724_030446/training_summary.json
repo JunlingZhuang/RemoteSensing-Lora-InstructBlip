@@ -1,0 +1,28 @@
+{
+  "training_completed": "2025-07-24T03:33:15.971463",
+  "config": {
+    "name": "ultra_conservative_lora_instructblip",
+    "description": "Ultra conservative configuration after OOM with batch_size=24. Prioritizes stability over speed.",
+    "num_epochs": 10,
+    "batch_size": 12,
+    "learning_rate": 0.0003,
+    "max_samples": 2068,
+    "lora_r": 8,
+    "lora_alpha": 16,
+    "lora_dropout": 0.1,
+    "warmup_steps": 100,
+    "max_grad_norm": 1.0,
+    "start_factor": 0.1,
+    "val_split": 0.2,
+    "random_seed": 42,
+    "torch_dtype": "float32"
+  },
+  "final_losses": {
+    "train_loss": 1.5229232373265174,
+    "val_loss": 1.4242836236953735
+  },
+  "best_val_loss": 1.4242836236953735,
+  "total_epochs": 10,
+  "total_training_time": 1445.0627014636993,
+  "checkpoints_dir": "checkpoints/ultra_conservative_lora_instructblip_20250724_030446"
+}

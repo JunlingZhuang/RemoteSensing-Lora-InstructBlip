@@ -1,0 +1,132 @@
+{
+  "training_completed": true,
+  "total_epochs": 10,
+  "final_train_loss": 1.5229232373265174,
+  "final_val_loss": 1.4242836236953735,
+  "best_val_loss": 1.4242836236953735,
+  "best_val_epoch": 10,
+  "total_training_time": 1445.0627014636993,
+  "avg_epoch_time": 144.50627014636993,
+  "epoch_details": [
+    {
+      "epoch": 1,
+      "train_loss": 1.8455633931077284,
+      "val_loss": 1.5770071826197885,
+      "learning_rate": 0.0003000000000000003,
+      "epoch_time": 144.96744751930237,
+      "train_batches": 173,
+      "val_batches": 44
+    },
+    {
+      "epoch": 2,
+      "train_loss": 1.6474458640710468,
+      "val_loss": 1.5160692848942496,
+      "learning_rate": 0.0003000000000000003,
+      "epoch_time": 144.56308031082153,
+      "train_batches": 173,
+      "val_batches": 44
+    },
+    {
+      "epoch": 3,
+      "train_loss": 1.613463301190062,
+      "val_loss": 1.4833883751522412,
+      "learning_rate": 0.0003000000000000003,
+      "epoch_time": 144.3030595779419,
+      "train_batches": 173,
+      "val_batches": 44
+    },
+    {
+      "epoch": 4,
+      "train_loss": 1.5932410852068422,
+      "val_loss": 1.4638151851567356,
+      "learning_rate": 0.0003000000000000003,
+      "epoch_time": 144.78105115890503,
+      "train_batches": 173,
+      "val_batches": 44
+    },
+    {
+      "epoch": 5,
+      "train_loss": 1.5736607065090555,
+      "val_loss": 1.4658102989196777,
+      "learning_rate": 0.0003000000000000003,
+      "epoch_time": 144.37798714637756,
+      "train_batches": 173,
+      "val_batches": 44
+    },
+    {
+      "epoch": 6,
+      "train_loss": 1.5603293056432912,
+      "val_loss": 1.458330056884072,
+      "learning_rate": 0.0003000000000000003,
+      "epoch_time": 144.044983625412,
+      "train_batches": 173,
+      "val_batches": 44
+    },
+    {
+      "epoch": 7,
+      "train_loss": 1.5523824705553881,
+      "val_loss": 1.462655026804317,
+      "learning_rate": 0.0003000000000000003,
+      "epoch_time": 144.35479259490967,
+      "train_batches": 173,
+      "val_batches": 44
+    },
+    {
+      "epoch": 8,
+      "train_loss": 1.5452686796298605,
+      "val_loss": 1.4350427903912284,
+      "learning_rate": 0.0003000000000000003,
+      "epoch_time": 144.63247680664062,
+      "train_batches": 173,
+      "val_batches": 44
+    },
+    {
+      "epoch": 9,
+      "train_loss": 1.5328080826412047,
+      "val_loss": 1.4417786625298588,
+      "learning_rate": 0.0003000000000000003,
+      "epoch_time": 144.5566964149475,
+      "train_batches": 173,
+      "val_batches": 44
+    },
+    {
+      "epoch": 10,
+      "train_loss": 1.5229232373265174,
+      "val_loss": 1.4242836236953735,
+      "learning_rate": 0.0003000000000000003,
+      "epoch_time": 144.48112630844116,
+      "train_batches": 173,
+      "val_batches": 44
+    }
+  ],
+  "config": {
+    "model_name": "Salesforce/instructblip-flan-t5-xl",
+    "device": "cuda",
+    "torch_dtype": "float32",
+    "lora_r": 8,
+    "lora_alpha": 16,
+    "lora_dropout": 0.1,
+    "target_modules": [
+      "query",
+      "key",
+      "value",
+      "dense"
+    ],
+    "learning_rate": 0.0003,
+    "batch_size": 12,
+    "num_epochs": 10,
+    "warmup_steps": 100,
+    "weight_decay": 0.0,
+    "max_grad_norm": 1.0,
+    "train_split": 0.8,
+    "val_split": 0.2,
+    "random_seed": 42,
+    "save_dir": "checkpoints/ultra_conservative_lora_instructblip_20250724_030446",
+    "log_every": 10,
+    "save_every_epoch": true,
+    "max_samples": 2068,
+    "start_factor": 0.1,
+    "rsicap_captions_file": "data/rsgpt_dataset/RSICap/captions.json",
+    "rsicap_images_dir": "data/rsgpt_dataset/RSICap/images"
+  }
+}

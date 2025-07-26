@@ -19,7 +19,7 @@ This report demonstrates data augmentation techniques applied to **real remote s
 
 ### Spatial Transformations
 
-#### Random Resized Crop (模拟不同拍摄高度)
+#### Random Resized Crop 
 Simulates different imaging altitudes and field-of-view variations.
 
 | Conservative Crop | Aggressive Crop |
@@ -31,7 +31,7 @@ Simulates different imaging altitudes and field-of-view variations.
 
 ### Photometric Transformations
 
-#### Color Jitter (模拟不同光照和大气条件)
+#### Color Jitter
 Simulates varying illumination and atmospheric conditions on real imagery.
 
 | Subtle Color Variation | Strong Color Variation |
@@ -41,7 +41,7 @@ Simulates varying illumination and atmospheric conditions on real imagery.
 
 *Real effect: Shows how atmospheric conditions and solar angles affect the same geographic area*
 
-#### Gaussian Blur (模拟大气散射和传感器模糊)
+#### Gaussian Blur
 Simulates atmospheric scattering and sensor blur effects on real remote sensing data.
 
 | Light Atmospheric Blur | Heavy Atmospheric Blur |
@@ -51,7 +51,7 @@ Simulates atmospheric scattering and sensor blur effects on real remote sensing 
 
 *Real effect: Demonstrates how atmospheric conditions degrade image quality in remote sensing*
 
-#### Grayscale Conversion (模拟单波段图像)
+#### Grayscale Conversion
 Simulates panchromatic or single-band imagery from real multispectral data.
 
 | Original RGB | Panchromatic Simulation |
@@ -88,25 +88,3 @@ transforms.RandomResizedCrop(224, scale=(0.8, 1.0))
 
 # Realistic color variations - based on atmospheric effects
 transforms.ColorJitter(brightness=0.3, contrast=0.3, saturation=0.2, hue=0.1)
-```
-
-### Validation on Real Data
-- All effects tested on actual RSICap remote sensing imagery
-- Parameters tuned for realistic remote sensing conditions
-- Preserves semantic content while increasing diversity
-
-## Usage in Research
-
-### For Paper Writing
-- Use Figure 1 for methodology overview
-- Include individual comparisons for detailed analysis
-- Emphasize real-world applicability and domain-specific design
-
-### For Training
-- Apply to full RSICap dataset for improved VQA performance
-- Expected improvements in robustness and generalization
-- Particularly effective for spatial reasoning tasks
-
----
-*Generated using real RSICap remote sensing imagery*
-*All augmentation effects preserve semantic content while simulating realistic imaging variations*
